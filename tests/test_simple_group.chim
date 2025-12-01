@@ -1,0 +1,7 @@
+system
+
+fn test():
+    组 g1:
+        令 x := 1
+        输出(x)
+    输出("done")

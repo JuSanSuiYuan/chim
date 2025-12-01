@@ -1,0 +1,103 @@
+system
+
+# 测试1: 基本组块功能
+fn test_basic_group():
+    组 临时数据:
+        令 x := 数组(1, 2, 3, 4, 5)
+        令 y := 100
+        输出("组内数据:", x, y)
+    # x 和 y 在组结束后自动释放
+    输出("组外继续执行")
+
+# 测试2: 快照跨组传递
+fn test_snapshot():
+    令 result := 0
+    组 数据处理:
+        令 data := 数组(10, 20, 30)
+        
+        # 创建快照以跨组传递
+        令 snap := 快照 data
+        
+        # 组结束，data被释放
+    
+    # snap仍然有效（只读）
+    输出("快照数据:", snap)
+    返回 snap[0]
+
+# 测试3: 句柄引用
+fn test_handle():
+    组 外层:
+        令 buffer := 数组(1, 2, 3)
+        
+        组 内层:
+            # 使用句柄引用外层数据
+            令 h := 句柄 buffer
+            输出("句柄引用:", h)
+
+# 测试4: 嵌套组块
+fn test_nested_groups():
+    组 外层组:
+        令 outer_data := 数组(1, 2, 3)
+        
+        组 内层组:
+            令 inner_data := 数组(4, 5, 6)
+            
+            # 访问外层数据需要句柄
+            令 h := 句柄 outer_data
+            输出("内层访问外层:", h)
+        
+        # inner_data 已释放
+        输出("外层数据:", outer_data)
+    
+    # outer_data 已释放
+
+# 测试5: 参数生命周期
+fn process_data(data: 数组<整数>) -> 整数:
+    # 参数data的生命周期为Param
+    令 sum := 0
+    对于 item 在 data:
+        设 sum = sum + item
+    返回 sum
+
+# 测试6: 返回值生命周期
+fn create_data() -> 数组<整数>:
+    令 result := 数组(1, 2, 3, 4, 5)
+    # result的生命周期被推断为Return
+    返回 result
+
+# 测试7: 组内arena分配
+fn test_arena_allocation():
+    组 批量分配:
+        # arena提供批量内存分配优化
+        令 buffer := 数组(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        令 data1 := 数组(100, 200)
+        令 data2 := 数组(300, 400)
+        
+        # 所有数据在组内连续分配
+        输出("批量分配完成")
+    
+    # 整组内存一次性释放
+
+# 测试8: 错误：跨组直接访问（应该报错）
+# fn test_invalid_cross_group():
+#     令 外部变量 := 0
+#     组 测试组:
+#         令 内部变量 := 数组(1, 2, 3)
+#     
+#     # 错误：内部变量已被释放
+#     输出(内部变量)  # 应该报错
+
+# 主函数
+fn 主():
+    test_basic_group()
+    test_snapshot()
+    test_handle()
+    test_nested_groups()
+    
+    令 data := create_data()
+    令 sum := process_data(data)
+    输出("总和:", sum)
+    
+    test_arena_allocation()
+    
+    输出("所有测试完成!")

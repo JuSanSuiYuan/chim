@@ -1,0 +1,11 @@
+D:\PROJECT\Chim\compiler-rs\target\release\deps\beef-e198d88b530b6dd8.d: C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lib.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\traits.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\wide.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\generic.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lean.rs
+
+D:\PROJECT\Chim\compiler-rs\target\release\deps\libbeef-e198d88b530b6dd8.rlib: C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lib.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\traits.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\wide.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\generic.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lean.rs
+
+D:\PROJECT\Chim\compiler-rs\target\release\deps\libbeef-e198d88b530b6dd8.rmeta: C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lib.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\traits.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\wide.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\generic.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lean.rs
+
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lib.rs:
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\traits.rs:
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\wide.rs:
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\generic.rs:
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\beef-0.5.2\src\lean.rs:

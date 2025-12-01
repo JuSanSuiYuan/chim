@@ -1,0 +1,4 @@
+system
+
+fn 主():
+    输出("Hello World")

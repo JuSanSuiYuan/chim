@@ -1,0 +1,9 @@
+DSL
+
+[package]
+name = "hello-chim"
+version = "0.1.0"
+dialect = "compat"
+
+[dependencies]
+nova-std = "0.1.*"

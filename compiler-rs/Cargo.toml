@@ -1,0 +1,43 @@
+[package]
+name = "chim_frontend"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+name = "chim_frontend"
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+lazy_static = "1.5.0"
+logos = "0.15.1"
+pest = "2.8.4"
+pest_derive = "2.8.4"
+
+[profile.dev]
+opt-level = 1
+incremental = true
+codegen-units = 16
+debug = true
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+incremental = false
+strip = "symbols"
+
+[profile.bench]
+opt-level = 3
+lto = false
+codegen-units = 4
+debug = false
+
+# 编译器特定优化
+[rust]
+debug-assertions = false
+overflow-checks = false
+
+[package.metadata.rust-analyzer]
+check = true
+cargo-watch-args = ["--features", "std"]

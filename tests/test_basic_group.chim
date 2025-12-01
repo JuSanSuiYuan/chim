@@ -1,0 +1,29 @@
+system
+
+# 基础组块测试
+fn test_basic():
+    组 临时:
+        令 x := 100
+        输出(x)
+
+# 快照测试
+fn test_snap() -> 整数:
+    令 result := 0
+    组 数据:
+        令 data := 数组(1, 2, 3)
+        令 s := 快照 data
+        设 result = s[0]
+    返回 result
+
+# 句柄测试  
+fn test_hdl():
+    组 外:
+        令 buf := 数组(1, 2)
+        令 h := 句柄 buf
+        输出(h)
+
+fn 主():
+    test_basic()
+    令 r := test_snap()
+    输出(r)
+    test_hdl()

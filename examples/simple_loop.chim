@@ -1,0 +1,10 @@
+system
+
+fn test_loop():
+    令 nums := 数组(1, 2, 3, 4, 5)
+    
+    循环 n 在 nums:
+        输出(n)
+
+fn 主():
+    test_loop()

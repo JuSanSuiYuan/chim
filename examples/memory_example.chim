@@ -1,0 +1,59 @@
+system
+
+# 内存管理示例 - 使用组生命周期
+
+fn process_data(size: 整数) -> 整数:
+    令 total := 0
+    令 snap_value := 0
+    
+    # 临时数据组 - 自动批量释放
+    组 临时缓冲:
+        令 buffer := 数组(1, 2, 3, 4, 5)
+        令 temp := 数组(10, 20, 30)
+        
+        # 计算总和
+        设 total = buffer[0] + temp[0]
+        
+        # 创建快照传出组外
+        令 snapshot_data := 快照 buffer
+        输出("快照创建:", snapshot_data)
+        设 snap_value = snapshot_data[0]
+    
+    # 组外，buffer和temp已释放
+    输出("临时缓冲已释放，总和:", total)
+    输出("快照值:", snap_value)
+    返回 total
+
+fn nested_groups():
+    组 外层:
+        令 outer_val := 100
+        输出("外层值:", outer_val)
+        
+        组 内层:
+            令 inner_val := 200
+            
+            # 使用句柄引用外层数据
+            令 h := 句柄 outer_val
+            输出("内层通过句柄访问外层:", h)
+            输出("内层值:", inner_val)
+        
+        # 内层组结束
+        输出("内层已释放")
+    
+    # 外层组结束
+    输出("外层已释放")
+
+fn 主():
+    输出("===== Chim 组生命周期示例 =====")
+    输出("")
+    
+    输出("1. 基础组块:")
+    令 result := process_data(5)
+    输出("返回值:", result)
+    输出("")
+    
+    输出("2. 嵌套组块:")
+    nested_groups()
+    输出("")
+    
+    输出("===== 完成 =====")

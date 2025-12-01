@@ -1,0 +1,334 @@
+// Chim语言PEG语法定义
+// 支持中英双语关键字、缩进式代码块、唯一分支match
+
+WHITESPACE = _{ " " | "\t" }
+COMMENT = _{ ("//" | "#") ~ (!NEWLINE ~ ANY)* }
+NEWLINE = _{ "\r\n" | "\n" }
+
+// ========== 关键字 ==========
+FUNCTION = { "函数" | "fn" }
+LET = { "令" | "let" }
+VAR = { "设" | "var" }
+MUT = { "可变" | "mut" }
+RETURN = { "返回" | "return" }
+IMPORT = { "导入" | "import" }
+EXPORT = { "导出" | "export" }
+PUB = { "公共" | "pub" }
+STRUCT = { "结构体" | "struct" }
+ENUM = { "枚举" | "enum" }
+CLASS = { "类" | "class" }
+TRAIT = { "特性" | "trait" }
+IMPL = { "实现" | "impl" }
+MATCH = { "匹配" | "match" }
+CASE = { "案例" | "case" }
+DEFAULT = { "默认" | "_" }
+IF = { "如果" | "if" }
+ELIF = { "否则如果" | "elif" }
+ELSE = { "否则" | "else" }
+FOR = { "对于" | "for" }
+IN = { "在" | "in" }
+LOOP = { "循环" | "loop" }
+WHILE = { "当" | "while" }
+BREAK = { "跳出" | "break" }
+CONTINUE = { "继续" | "continue" }
+TRUE = { "真" | "true" }
+FALSE = { "假" | "false" }
+NULL = { "空" | "null" }
+UNSAFE = { "不安全" | "unsafe" }
+CONST = { "常量" | "const" }
+STATIC = { "静态" | "static" }
+TYPE = { "类型别名" | "type" }
+TRY = { "尝试" | "try" }
+CATCH = { "捕获" | "catch" }
+CHAN = { "通道" | "chan" }
+ASYNC = { "协程" | "async" }
+AWAIT = { "等待" | "await" }
+AS = { "作为" | "as" }
+COMPAT = { "兼容" | "compat" }
+SAFE = { "安全" | "safe" }
+SYSTEM = { "系统" | "system" }
+DYNAMIC = { "动态" | "dynamic" }
+DSL = { "DSL" | "toml" }
+
+// ========== 运算符 ==========
+ASSIGN = { "=" }
+COLON_ASSIGN = { ":=" }
+PLUS = { "+" }
+MINUS = { "-" }
+MULTIPLY = { "*" }
+DIVIDE = { "/" }
+MODULO = { "%" }
+POWER = { "**" }
+
+EQUAL = { "==" }
+NOT_EQUAL = { "!=" }
+GREATER_OR_EQUAL = { ">=" }
+LESS_OR_EQUAL = { "<=" }
+GREATER = { ">" }
+LESS = { "<" }
+
+AND = { "&&" }
+OR = { "||" }
+NOT = { "!" }
+
+ADD_ASSIGN = { "+=" }
+SUBTRACT_ASSIGN = { "-=" }
+MULTIPLY_ASSIGN = { "*=" }
+DIVIDE_ASSIGN = { "/=" }
+MODULO_ASSIGN = { "%=" }
+
+ARROW = { "->" }
+DIRECTION_ARROW = { "<-" }
+ELLIPSIS = { "..." }
+RANGE = { ".." }
+DOT = { "." }
+COMMA = { "," }
+COLON = { ":" }
+DOUBLE_COLON = { "::" }
+SEMICOLON = { ";" }
+
+LEFT_PAREN = { "(" }
+RIGHT_PAREN = { ")" }
+LEFT_BRACKET = { "[" }
+RIGHT_BRACKET = { "]" }
+LEFT_BRACE = { "{" }
+RIGHT_BRACE = { "}" }
+PIPE = { "|" }
+
+// ========== 字面量 ==========
+INTEGER = @{ ASCII_DIGIT+ }
+FLOAT = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
+STRING = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+CHAR = @{ "'" ~ (!"'" ~ ANY) ~ "'" }
+
+// ========== 标识符 ==========
+IDENTIFIER = @{
+    (ASCII_ALPHA | "_" | '\u{4e00}'..'\u{9fa5}')
+    ~ (ASCII_ALPHANUMERIC | "_" | '\u{4e00}'..'\u{9fa5}')*
+}
+
+// ========== 类型表达式 ==========
+type_expr = {
+    function_type
+    | generic_type
+    | array_type
+    | tuple_type
+    | IDENTIFIER
+}
+
+tuple_type = { LEFT_PAREN ~ type_expr ~ (COMMA ~ type_expr)* ~ RIGHT_PAREN }
+array_type = { LEFT_BRACKET ~ type_expr ~ RIGHT_BRACKET }
+function_type = { LEFT_PAREN ~ type_expr ~ (COMMA ~ type_expr)* ~ RIGHT_PAREN ~ ARROW ~ type_expr }
+generic_type = { IDENTIFIER ~ LESS ~ type_expr ~ (COMMA ~ type_expr)* ~ GREATER }
+
+// ========== 表达式 ==========
+expression = { assignment }
+
+assignment = { logical_or ~ ((ASSIGN | ADD_ASSIGN | SUBTRACT_ASSIGN) ~ logical_or)* }
+logical_or = { logical_and ~ (OR ~ logical_and)* }
+logical_and = { comparison ~ (AND ~ comparison)* }
+comparison = { term ~ ((EQUAL | NOT_EQUAL | GREATER_OR_EQUAL | LESS_OR_EQUAL | GREATER | LESS) ~ term)* }
+term = { factor ~ ((PLUS | MINUS) ~ factor)* }
+factor = { unary ~ ((MULTIPLY | DIVIDE | MODULO) ~ unary)* }
+unary = { (NOT | MINUS | PLUS)? ~ primary }
+
+primary = {
+    literal
+    | identifier_expr
+    | array_literal
+    | tuple_literal
+    | struct_literal
+    | function_call
+    | LEFT_PAREN ~ expression ~ RIGHT_PAREN
+}
+
+literal = {
+    TRUE
+    | FALSE
+    | NULL
+    | FLOAT
+    | INTEGER
+    | STRING
+    | CHAR
+}
+
+identifier_expr = { IDENTIFIER ~ (DOT ~ IDENTIFIER | LEFT_BRACKET ~ expression ~ RIGHT_BRACKET)* }
+
+array_literal = { LEFT_BRACKET ~ (expression ~ (COMMA ~ expression)*)? ~ RIGHT_BRACKET }
+tuple_literal = { LEFT_PAREN ~ expression ~ (COMMA ~ expression)+ ~ RIGHT_PAREN }
+struct_literal = { IDENTIFIER ~ LEFT_BRACE ~ (field_init ~ (COMMA ~ field_init)*)? ~ RIGHT_BRACE }
+field_init = { IDENTIFIER ~ COLON ~ expression }
+
+function_call = { IDENTIFIER ~ LEFT_PAREN ~ (expression ~ (COMMA ~ expression)*)? ~ RIGHT_PAREN }
+
+// ========== 语句 ==========
+statement = {
+    expression_statement
+    | variable_decl
+    | constant_decl
+    | static_decl
+    | function_def
+    | struct_def
+    | enum_def
+    | class_def
+    | trait_def
+    | impl_def
+    | type_alias
+    | control_flow
+    | return_stmt
+    | break_stmt
+    | continue_stmt
+    | inline_asm_stmt
+    | unsafe_block
+}
+
+expression_statement = { expression ~ SEMICOLON? }
+
+variable_decl = { (LET | VAR | MUT) ~ IDENTIFIER ~ (COLON ~ type_expr)? ~ (ASSIGN ~ expression)? }
+constant_decl = { CONST ~ IDENTIFIER ~ (COLON ~ type_expr)? ~ ASSIGN ~ expression }
+static_decl = { STATIC ~ MUT? ~ IDENTIFIER ~ (COLON ~ type_expr)? ~ ASSIGN ~ expression }
+
+// ========== 函数定义 ==========
+function_def = {
+    PUB? ~ FUNCTION ~ IDENTIFIER
+    ~ LEFT_PAREN ~ parameter_list? ~ RIGHT_PAREN
+    ~ (ARROW ~ type_expr)?
+    ~ COLON ~ block
+}
+
+parameter_list = { parameter ~ (COMMA ~ parameter)* }
+parameter = { MUT? ~ IDENTIFIER ~ COLON ~ type_expr }
+
+block = { NEWLINE* ~ statement* }
+
+// ========== 结构体定义 ==========
+struct_def = {
+    PUB? ~ STRUCT ~ IDENTIFIER ~ COLON ~ NEWLINE*
+    ~ field_def+
+}
+
+field_def = { PUB? ~ IDENTIFIER ~ COLON ~ type_expr ~ NEWLINE* }
+
+// ========== 枚举定义 ==========
+enum_def = {
+    PUB? ~ ENUM ~ IDENTIFIER ~ COLON ~ NEWLINE*
+    ~ enum_variant+
+}
+
+enum_variant = { PUB? ~ IDENTIFIER ~ (LEFT_PAREN ~ type_expr ~ (COMMA ~ type_expr)* ~ RIGHT_PAREN)? ~ NEWLINE* }
+
+// ========== 类定义 ==========
+class_def = {
+    PUB? ~ CLASS ~ IDENTIFIER ~ COLON ~ NEWLINE*
+    ~ class_member+
+}
+
+class_member = { field_def | method_def | constructor_def }
+
+method_def = {
+    PUB? ~ ASYNC? ~ FUNCTION ~ IDENTIFIER
+    ~ LEFT_PAREN ~ parameter_list? ~ RIGHT_PAREN
+    ~ (ARROW ~ type_expr)?
+    ~ COLON ~ block
+}
+
+constructor_def = {
+    PUB? ~ IDENTIFIER
+    ~ LEFT_PAREN ~ parameter_list? ~ RIGHT_PAREN
+    ~ COLON ~ block
+}
+
+// ========== Trait定义 ==========
+trait_def = {
+    PUB? ~ TRAIT ~ IDENTIFIER ~ COLON ~ NEWLINE*
+    ~ trait_member+
+}
+
+trait_member = { method_signature | type_alias }
+
+method_signature = {
+    PUB? ~ ASYNC? ~ FUNCTION ~ IDENTIFIER
+    ~ LEFT_PAREN ~ parameter_list? ~ RIGHT_PAREN
+    ~ (ARROW ~ type_expr)?
+}
+
+// ========== Impl定义 ==========
+impl_def = {
+    PUB? ~ IMPL ~ (type_expr ~ FOR)? ~ type_expr ~ COLON ~ NEWLINE*
+    ~ impl_member+
+}
+
+impl_member = { method_def | field_def }
+
+// ========== 类型别名 ==========
+type_alias = { PUB? ~ TYPE ~ IDENTIFIER ~ ASSIGN ~ type_expr }
+
+// ========== 控制流 ==========
+control_flow = {
+    if_stmt
+    | loop_stmt
+    | for_stmt
+    | while_stmt
+    | match_stmt
+    | try_catch_stmt
+}
+
+if_stmt = {
+    IF ~ expression ~ COLON ~ block
+    ~ (ELIF ~ expression ~ COLON ~ block)*
+    ~ (ELSE ~ COLON ~ block)?
+}
+
+loop_stmt = { LOOP ~ COLON ~ block }
+
+for_stmt = { FOR ~ MUT? ~ IDENTIFIER ~ IN ~ expression ~ COLON ~ block }
+
+while_stmt = { WHILE ~ expression ~ COLON ~ block }
+
+match_stmt = {
+    MATCH ~ expression ~ PIPE ~ NEWLINE*
+    ~ match_case+
+    ~ match_default?
+}
+
+match_case = { CASE ~ expression ~ ARROW ~ block }
+match_default = { DEFAULT ~ ARROW ~ block }
+
+try_catch_stmt = {
+    TRY ~ COLON ~ block
+    ~ (CATCH ~ COLON ~ block)?
+}
+
+return_stmt = { RETURN ~ expression? }
+break_stmt = { BREAK }
+continue_stmt = { CONTINUE }
+
+inline_asm_stmt = { "内联汇编" ~ STRING }
+unsafe_block = { UNSAFE ~ COLON ~ block }
+
+// ========== 导入导出 ==========
+import_stmt = { IMPORT ~ import_path ~ (AS ~ IDENTIFIER)? }
+import_path = { IDENTIFIER ~ (DOUBLE_COLON ~ IDENTIFIER)* }
+
+export_stmt = {
+    EXPORT ~ (
+        (IMPORT ~ import_path)
+        | function_def
+        | struct_def
+        | enum_def
+        | class_def
+        | trait_def
+        | type_alias
+    )
+}
+
+// ========== 模块指令 ==========
+module_directive = { SAFE | SYSTEM | COMPAT | DYNAMIC | DSL }
+
+// ========== 程序 ==========
+program = {
+    SOI
+    ~ module_directive?
+    ~ (import_stmt | export_stmt | statement)*
+    ~ EOI
+}

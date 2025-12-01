@@ -1,0 +1,10 @@
+兼容
+
+公共 fn 主():
+    令 x := 2
+    if x == 1:
+        io.输出("one")
+    elif x == 2:
+        io.输出("two")
+    else:
+        io.输出("other")
