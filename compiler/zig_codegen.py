@@ -10,13 +10,18 @@ from typing import List
 
 # 导入组生命周期AST节点
 try:
-    from parser_ import GroupBlock, SnapshotExpression, HandleExpression, ArenaCall
+    from parser_ import (GroupBlock, SnapshotExpression, HandleExpression, ArenaCall,
+                         PointerType, AddressOf, Dereference, InlineAssembly)
 except ImportError:
     # 兼容旧版本
     GroupBlock = None
     SnapshotExpression = None
     HandleExpression = None
     ArenaCall = None
+    PointerType = None
+    AddressOf = None
+    Dereference = None
+    InlineAssembly = None
 
 class ZigCodeGenerator:
     """Zig代码生成器"""
@@ -87,6 +92,8 @@ class ZigCodeGenerator:
             self.visit_return_statement(stmt)
         elif isinstance(stmt, CallExpression):
             self.emit(self.visit_expression(stmt) + ";")
+        elif isinstance(stmt, InlineAssembly):
+            self.visit_inline_assembly(stmt)
         elif GroupBlock and isinstance(stmt, GroupBlock):
             self.visit_group_block(stmt)
     
@@ -323,6 +330,14 @@ class ZigCodeGenerator:
             return f"&{target}  // 句柄"
         elif ArenaCall and isinstance(expr, ArenaCall):
             return "std.heap.page_allocator  // Arena"
+        elif AddressOf and isinstance(expr, AddressOf):
+            # 取地址: &variable
+            target = self.visit_expression(expr.target)
+            return f"&{target}"
+        elif Dereference and isinstance(expr, Dereference):
+            # 解引用: variable.* 或 *variable
+            target = self.visit_expression(expr.target)
+            return f"{target}.*"
         else:
             return "undefined"
     
@@ -354,6 +369,26 @@ class ZigCodeGenerator:
         # Zig中使用std.StringHashMap或std.AutoHashMap
         return "std.AutoHashMap(i64, i64).init(std.heap.page_allocator)  // Map"
     
+    def visit_inline_assembly(self, node):
+        """访问内联汇编"""
+        vol = "volatile " if node.is_volatile else ""
+        
+        # Zig 的内联汇编语法
+        # asm volatile (code : outputs : inputs : clobbers)
+        self.emit(f"_ = asm {vol}(")
+        self.indent_level += 1
+        
+        # 汇编代码 (使用 \\\ 转义字符串)
+        code_lines = node.code.split('\\n')
+        for line in code_lines:
+            self.emit(f"\\\\ {line}")
+        
+        # TODO: 添加约束支持 (当前简化版本)
+        
+        self.indent_level -= 1
+        self.emit(");")
+        self.emit()
+    
     def visit_call_expression(self, node: CallExpression) -> str:
         """访问函数调用"""
         func_name = self.visit_expression(node.function)
@@ -380,6 +415,42 @@ class ZigCodeGenerator:
                         format_parts.append(f'std.debug.print("{{}} ", .{{{arg}}})')
                 format_parts.append('std.debug.print("\\n", .{})')
                 return '; '.join(format_parts)
+        
+        # 端口 I/O 内置函数
+        if func_name in ("inb", "outb", "inw", "outw", "ind", "outd"):
+            return self.generate_port_io(func_name, args)
+        
+        return f"{func_name}({', '.join(args)})"
+    
+    def generate_port_io(self, func_name: str, args: list) -> str:
+        """生成端口 I/O 代码"""
+        if func_name == "inb":
+            # inb(port) -> u8
+            port = args[0] if args else "0"
+            return f"asm volatile (\"inb %[port], %[result]\" : [result] \"={{al}}\" (-> u8) : [port] \"{{dx}}\" ({port}))"
+        elif func_name == "outb":
+            # outb(port, value)
+            port = args[0] if len(args) > 0 else "0"
+            value = args[1] if len(args) > 1 else "0"
+            return f"asm volatile (\"outb %[value], %[port]\" : : [port] \"{{dx}}\" ({port}), [value] \"{{al}}\" ({value}))"
+        elif func_name == "inw":
+            # inw(port) -> u16
+            port = args[0] if args else "0"
+            return f"asm volatile (\"inw %[port], %[result]\" : [result] \"={{ax}}\" (-> u16) : [port] \"{{dx}}\" ({port}))"
+        elif func_name == "outw":
+            # outw(port, value)
+            port = args[0] if len(args) > 0 else "0"
+            value = args[1] if len(args) > 1 else "0"
+            return f"asm volatile (\"outw %[value], %[port]\" : : [port] \"{{dx}}\" ({port}), [value] \"{{ax}}\" ({value}))"
+        elif func_name == "ind":
+            # ind(port) -> u32
+            port = args[0] if args else "0"
+            return f"asm volatile (\"inl %[port], %[result]\" : [result] \"={{eax}}\" (-> u32) : [port] \"{{dx}}\" ({port}))"
+        elif func_name == "outd":
+            # outd(port, value)
+            port = args[0] if len(args) > 0 else "0"
+            value = args[1] if len(args) > 1 else "0"
+            return f"asm volatile (\"outl %[value], %[port]\" : : [port] \"{{dx}}\" ({port}), [value] \"{{eax}}\" ({value}))"
         
         return f"{func_name}({', '.join(args)})"
 

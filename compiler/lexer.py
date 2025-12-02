@@ -44,6 +44,13 @@ class TokenType(Enum):
     SNAPSHOT = 'SNAPSHOT'   # 快照/snapshot
     HANDLE = 'HANDLE'       # 句柄/handle
     ARENA = 'ARENA'         # arena (system::arena)
+    ASM = 'ASM'             # 汇编/asm (内联汇编)
+    VOLATILE = 'VOLATILE'   # volatile (阻止优化)
+    
+    # 指针相关
+    STAR = 'STAR'           # * (指针解引用或类型声明)
+    AMPERSAND = 'AMPERSAND' # & (取地址)
+    AT = 'AT'               # @ (类型转换或特殊操作)
     
     # 常量
     TRUE = 'TRUE'           # 真/true
@@ -198,6 +205,16 @@ class Lexer:
             'return': TokenType.RETURN,
             '外部': TokenType.EXTERN,
             'extern': TokenType.EXTERN,
+            '汇编': TokenType.ASM,
+            'asm': TokenType.ASM,
+            'volatile': TokenType.VOLATILE,
+            # 端口I/O内置函数
+            'inb': TokenType.IDENTIFIER,  # 保持为标识符，在语义分析中处理
+            'outb': TokenType.IDENTIFIER,
+            'inw': TokenType.IDENTIFIER,
+            'outw': TokenType.IDENTIFIER,
+            'ind': TokenType.IDENTIFIER,
+            'outd': TokenType.IDENTIFIER,
             '快照': TokenType.SNAPSHOT,
             'snapshot': TokenType.SNAPSHOT,
             '句柄': TokenType.HANDLE,
@@ -319,6 +336,24 @@ class Lexer:
         start = self.position
         has_dot = False
         
+        # 检查十六进制数 0x...
+        if self.peek() == '0' and self.peek(1) and self.peek(1) in ('x', 'X'):
+            self.advance()  # consume '0'
+            self.advance()  # consume 'x'
+            hex_start = self.position
+            while self.position < len(self.source):
+                char = self.peek()
+                if char and char in '0123456789abcdefABCDEF':
+                    self.advance()
+                else:
+                    break
+            hex_str = self.source[hex_start:self.position]
+            if not hex_str:
+                raise SyntaxError(f"无效的十六进制数 行 {self.line}")
+            value = int(hex_str, 16)
+            return Token(TokenType.INTEGER, value, self.line, self.column - (self.position - start))
+        
+        # 普通十进制数
         while self.position < len(self.source):
             char = self.peek()
             if char == '.':
@@ -378,7 +413,8 @@ class Lexer:
                     self.advance()
                     self.tokens.append(Token(TokenType.POWER, '**', self.line, self.column - 2))
                 else:
-                    self.tokens.append(Token(TokenType.MULTIPLY, '*', self.line, self.column - 1))
+                    # * 可以是乘法或指针，通过上下文区分
+                    self.tokens.append(Token(TokenType.STAR, '*', self.line, self.column - 1))
             elif char == '/':
                 self.advance()
                 if self.peek() == '/':
@@ -419,13 +455,17 @@ class Lexer:
                     self.tokens.append(Token(TokenType.LEQ, '<=', self.line, self.column - 2))
                 else:
                     self.tokens.append(Token(TokenType.LT, '<', self.line, self.column - 1))
+            elif char == '@':
+                self.advance()
+                self.tokens.append(Token(TokenType.AT, '@', self.line, self.column - 1))
             elif char == '&':
                 self.advance()
                 if self.peek() == '&':
                     self.advance()
                     self.tokens.append(Token(TokenType.AND, '&&', self.line, self.column - 2))
                 else:
-                    raise SyntaxError(f"意外的符号 '&' 行 {self.line}")
+                    # 单个&用于取地址
+                    self.tokens.append(Token(TokenType.AMPERSAND, '&', self.line, self.column - 1))
             elif char == '|':
                 self.advance()
                 if self.peek() == '|':

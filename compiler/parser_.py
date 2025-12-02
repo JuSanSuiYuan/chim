@@ -211,6 +211,43 @@ class HandleExpression(ASTNode):
     def __repr__(self):
         return f"Handle({self.target})"
 
+class PointerType(ASTNode):
+    """指针类型: *T"""
+    def __init__(self, pointee_type, line, column):
+        super().__init__("PointerType", line, column)
+        self.pointee_type = pointee_type  # 指向的类型
+    def __repr__(self):
+        return f"*{self.pointee_type}"
+
+class AddressOf(ASTNode):
+    """取地址表达式: &variable"""
+    def __init__(self, target, line, column):
+        super().__init__("AddressOf", line, column)
+        self.target = target
+    def __repr__(self):
+        return f"&{self.target}"
+
+class Dereference(ASTNode):
+    """解引用表达式: variable.* 或 *variable (支持两种语法)"""
+    def __init__(self, target, line, column):
+        super().__init__("Dereference", line, column)
+        self.target = target
+    def __repr__(self):
+        return f"*{self.target}"
+
+class InlineAssembly(ASTNode):
+    """内联汇编: asm volatile (code : outputs : inputs : clobbers)"""
+    def __init__(self, code, is_volatile, outputs, inputs, clobbers, line, column):
+        super().__init__("InlineAssembly", line, column)
+        self.code = code  # 汇编代码字符串
+        self.is_volatile = is_volatile  # 是否标记为 volatile
+        self.outputs = outputs or []  # 输出约束列表
+        self.inputs = inputs or []    # 输入约束列表
+        self.clobbers = clobbers or [] # 破坏约束列表
+    def __repr__(self):
+        vol = "volatile " if self.is_volatile else ""
+        return f"InlineAssembly({vol}{self.code})"
+
 class ArenaCall(ASTNode):
     """Arena分配调用: system::arena()"""
     def __init__(self, line, column):
@@ -354,6 +391,10 @@ class Parser:
         elif token.type == TokenType.CONTINUE:
             tok = self.advance()
             return ContinueStatement(tok.line, tok.column)
+        # 内联汇编语句
+        elif token.type == TokenType.ASM:
+            asm_token = self.advance()
+            return self.parse_inline_assembly(asm_token)
         # 表达式语句
         else:
             expr = self.parse_expression()
@@ -585,12 +626,14 @@ class Parser:
         left = self.parse_unary()
         
         while self.peek() and self.peek().type in (
-            TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE,
+            TokenType.PLUS, TokenType.MINUS, TokenType.STAR, TokenType.DIVIDE,
             TokenType.MODULO, TokenType.POWER, TokenType.EQ, TokenType.NEQ,
             TokenType.GT, TokenType.LT, TokenType.GEQ, TokenType.LEQ,
             TokenType.AND, TokenType.OR, TokenType.CHAN_SEND
         ):
-            operator = self.advance().value
+            operator_token = self.advance()
+            # 在二元表达式中，* 是乘法运算符
+            operator = operator_token.value if operator_token.type != TokenType.STAR else '*'
             right = self.parse_unary()
             left = BinaryExpression(left, operator, right, left.line, left.column)
         
@@ -598,32 +641,67 @@ class Parser:
     
     def parse_unary(self):
         """解析一元表达式"""
+        # 取地址: &variable
+        if self.peek() and self.peek().type == TokenType.AMPERSAND:
+            op_token = self.advance()
+            operand = self.parse_unary()
+            return AddressOf(operand, op_token.line, op_token.column)
+        
+        # 前缀解引用: *variable (类 C 风格)
+        if self.peek() and self.peek().type == TokenType.STAR:
+            op_token = self.advance()
+            operand = self.parse_unary()
+            return Dereference(operand, op_token.line, op_token.column)
+        
         if self.peek() and self.peek().type in (TokenType.NOT, TokenType.MINUS, TokenType.CHAN_SEND):
             operator = self.advance().value
             operand = self.parse_unary()
             return UnaryExpression(operator, operand, operand.line, operand.column)
         
-        return self.parse_primary()
+        return self.parse_postfix()
+    
+    def parse_postfix(self):
+        """解析后缀表达式(包括成员访问和解引用)"""
+        expr = self.parse_primary()
+        
+        while True:
+            # 成员访问: expr.member
+            if self.peek() and self.peek().type == TokenType.DOT:
+                dot_token = self.advance()
+                # 检查是否是 .* (解引用)
+                if self.peek() and self.peek().type == TokenType.STAR:
+                    self.advance()  # consume *
+                    expr = Dereference(expr, dot_token.line, dot_token.column)
+                else:
+                    member_tok = self.consume(TokenType.IDENTIFIER, "成员名应该是标识符")
+                    expr = MemberAccess(expr, Identifier(member_tok.value, member_tok.line, member_tok.column), dot_token.line, dot_token.column)
+            # 函数调用 / 括号构造
+            elif self.peek() and self.peek().type == TokenType.LEFT_PAREN:
+                # 检查是否是特殊构造函数
+                if isinstance(expr, Identifier):
+                    if expr.name in ("数组", "array"):
+                        expr = self.parse_array_paren(expr.line, expr.column)
+                        continue
+                    elif expr.name in ("映射", "map"):
+                        expr = self.parse_map_paren(expr.line, expr.column)
+                        continue
+                # 普通函数调用
+                expr = self.parse_call(expr)
+            else:
+                break
+        
+        return expr
     
     def parse_primary(self):
         """解析基本表达式"""
         token = self.advance()
         
+        # 内联汇编: asm 或 asm volatile
+        if token.type == TokenType.ASM:
+            return self.parse_inline_assembly(token)
+        
         if token.type == TokenType.IDENTIFIER:
             ident = Identifier(token.value, token.line, token.column)
-            # 成员访问链 a.b.c
-            while self.peek() and self.peek().type == TokenType.DOT:
-                self.advance()  # consume '.'
-                member_tok = self.consume(TokenType.IDENTIFIER, "成员名应该是标识符")
-                ident = MemberAccess(ident, Identifier(member_tok.value, member_tok.line, member_tok.column), token.line, token.column)
-            # 函数调用（支持成员调用）
-            if self.peek() and self.peek().type == TokenType.LEFT_PAREN:
-                # 括号构造：数组/映射
-                if isinstance(ident, Identifier) and ident.name in ("数组", "array"):
-                    return self.parse_array_paren(token.line, token.column)
-                if isinstance(ident, Identifier) and ident.name in ("映射", "map"):
-                    return self.parse_map_paren(token.line, token.column)
-                return self.parse_call(ident)
             return ident
         elif token.type == TokenType.INTEGER:
             return Literal("INTEGER", token.value, token.line, token.column)
@@ -725,6 +803,12 @@ class Parser:
     def parse_type(self):
         """解析类型表达式"""
         token = self.peek()
+        
+        # 指针类型: *T
+        if token and token.type == TokenType.STAR:
+            self.advance()
+            pointee_type = self.parse_type()
+            return f"*{pointee_type}"
 
         # 基本类型
         if token and token.type == TokenType.IDENTIFIER:
@@ -870,3 +954,55 @@ class Parser:
                 default_branch_body = [nested]
             return MatchStatement(cond_i, [(true_lit, body_i), (Identifier('_', tok.line, tok.column), default_branch_body)], tok.line, tok.column)
         return lower_chain(0)
+    
+    def parse_inline_assembly(self, asm_token):
+        """解析内联汇编: asm [volatile] (code : outputs : inputs : clobbers)"""
+        is_volatile = False
+        
+        # 检查 volatile 关键字
+        if self.peek() and self.peek().type == TokenType.VOLATILE:
+            self.advance()
+            is_volatile = True
+        
+        # 必须有左括号
+        self.consume(TokenType.LEFT_PAREN, "内联汇编需要左括号")
+        
+        # 解析汇编代码字符串
+        code_token = self.consume(TokenType.STRING, "内联汇编代码必须是字符串")
+        code = code_token.value
+        
+        outputs = []
+        inputs = []
+        clobbers = []
+        
+        # 解析约束 (简化版，仅解析基本格式)
+        # 完整格式: (code : output_constraints : input_constraints : clobbers)
+        
+        if self.peek() and self.peek().type == TokenType.COLON:
+            self.advance()  # consume ':'
+            # 解析输出约束 (简化: 跳过到下一个冒号或右括号)
+            while self.peek() and self.peek().type not in (TokenType.COLON, TokenType.RIGHT_PAREN):
+                # 跳过约束内容 (简化处理)
+                self.advance()
+        
+        if self.peek() and self.peek().type == TokenType.COLON:
+            self.advance()  # consume ':'
+            # 解析输入约束
+            while self.peek() and self.peek().type not in (TokenType.COLON, TokenType.RIGHT_PAREN):
+                self.advance()
+        
+        if self.peek() and self.peek().type == TokenType.COLON:
+            self.advance()  # consume ':'
+            # 解析 clobbers
+            while self.peek() and self.peek().type != TokenType.RIGHT_PAREN:
+                self.advance()
+        
+        self.consume(TokenType.RIGHT_PAREN, "内联汇编需要右括号")
+        
+        return InlineAssembly(code, is_volatile, outputs, inputs, clobbers, asm_token.line, asm_token.column)
+    
+    def previous(self):
+        """返回上一个 token"""
+        if self.current > 0:
+            return self.tokens[self.current - 1]
+        return None
