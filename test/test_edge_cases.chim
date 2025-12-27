@@ -1,0 +1,85 @@
+// 简化的边界测试用例
+
+// 1. 空范围测试
+fn test_empty_range() -> void = {
+    let empty = 5..5  // 空范围
+    print("空范围测试")
+}
+
+// 2. 负数范围测试
+fn test_negative_range() -> void = {
+    let neg_range = -10..0
+    let neg_inclusive = -5..=-1
+    print("负数范围测试")
+}
+
+// 3. 浮点数范围测试
+fn test_float_range() -> void = {
+    let float_range = 1.5..3.5
+    print("浮点数范围测试")
+}
+
+// 4. 嵌套表达式测试
+fn test_nested() -> int = {
+    let result = (1 + 2) * (3 + 4)
+    return result
+}
+
+// 5. 简单的匹配测试
+fn test_simple_match(x: int) -> string = {
+    match x:
+        1 => "one"
+        2 => "two"
+        _ => "other"
+}
+
+// 6. 变量遮蔽测试
+fn testShadowing() -> int = {
+    let x: int = 10
+    {
+        let x: int = 20
+        return x
+    }
+}
+
+// 7. 链式函数调用
+fn add5(n: int) -> int = n + 5
+fn double(n: int) -> int = n * 2
+
+fn test_chained_calls() -> int = {
+    let result = double(add5(10))
+    return result
+}
+
+// 8. 复合赋值的链式使用
+fn test_compound_chain() -> int = {
+    var a: int = 1
+    var b: int = 2
+    var c: int = 3
+    
+    a += b
+    b += c
+    c += a
+    
+    return a + b + c
+}
+
+fn main() -> void = {
+    test_empty_range()
+    test_negative_range()
+    test_float_range()
+    
+    let nested_result: int = test_nested()
+    
+    let match_result: string = test_simple_match(2)
+    
+    let shadow_result: int = testShadowing()
+    
+    let chained_result: int = test_chained_calls()
+    
+    let compound_chain: int = test_compound_chain()
+    
+    print("边界测试全部通过!")
+}
+
+main()

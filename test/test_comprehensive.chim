@@ -1,0 +1,52 @@
+fn add(a: int, b: int) -> int = a + b;
+
+fn multiply(x: int, y: int) -> int = x * y;
+
+fn factorial(n: int) -> int {
+    if n <= 1 {
+        1
+    } else {
+        n * factorial(n - 1)
+    }
+}
+
+fn is_even(n: int) -> bool {
+    n % 2 == 0
+}
+
+fn sum_range(start: int, end: int) -> int {
+    let total: int = 0;
+    let i: int = start;
+    while i < end {
+        total = total + i;
+        i = i + 1;
+    }
+    total
+}
+
+fn compute_square(x: int) -> int = x * x;
+
+fn fibonacci(n: int) -> int {
+    if n <= 1 {
+        n
+    } else {
+        fibonacci(n - 1) + fibonacci(n - 2)
+    }
+}
+
+fn main() {
+    let result: int = add(10, 20);
+    let product: int = multiply(5, 6);
+    let fact_5: int = factorial(5);
+    let even_check: bool = is_even(10);
+    let sum_0_100: int = sum_range(0, 100);
+    let square_7: int = compute_square(7);
+    let fib_10: int = fibonacci(10);
+    
+    let nested_add: int = add(add(1, 2), add(3, 4));
+    let constant_fold: int = 5 * 6 + 10;
+    
+    let a: int = 100;
+    let b: int = 200;
+    let c: int = a + b;
+}

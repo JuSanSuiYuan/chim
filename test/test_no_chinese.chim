@@ -1,0 +1,7 @@
+// Simple test
+print("Hello, Chim World!")
+let a = 10
+var b = 20
+fn add(x: int, y: int) -> int = x + y
+let result = add(a, b)
+print("a + b = " + result.to_string())

@@ -1,0 +1,18 @@
+// 测试lambda表达式
+fn test_lambda() -> void = {
+    // 无参数lambda
+    let no_args = () => 42
+    let result1 = no_args()
+    
+    // 单参数lambda
+    let double = (x: int) => x * 2
+    let result2 = double(5)
+    
+    // 多参数lambda
+    let add = (a: int, b: int) => a + b
+    let result3 = add(10, 20)
+    
+    print("Lambda测试完成")
+}
+
+test_lambda()

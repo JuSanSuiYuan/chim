@@ -1,0 +1,5 @@
+// 简单的Chim测试程序
+fn add(a: int, b: int) -> int = a + b
+
+let result = add(10, 20)
+print(result)

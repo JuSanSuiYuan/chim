@@ -1,0 +1,5 @@
+fn add(a: int, b: int) -> int = a + b
+
+// 测试变量声明
+let age: int = 25
+let score: float = 90.5

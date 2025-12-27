@@ -1,0 +1,14 @@
+// Minimal Chim test
+
+fn main() {
+    let x: int = 42;
+    println(x);
+
+    var total: int = 0;
+    total += 10;
+    println(total);
+
+    for i in 1..=5 {
+        println(i);
+    }
+}
