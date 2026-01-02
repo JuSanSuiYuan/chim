@@ -1,0 +1,14 @@
+pub mod ast;
+pub mod lexer;
+pub mod parser;
+pub mod semantic;
+pub mod ir;
+pub mod codegen;
+pub mod wasm_codegen;
+pub mod optimizer;
+pub mod memory_layout;
+pub mod group_manager;
+pub mod allocation;
+pub mod rvo;
+pub mod backend;
+pub mod backends;

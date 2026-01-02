@@ -1,5 +1,5 @@
 use crate::ir::{Instruction, Function, Module};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -344,9 +344,260 @@ impl FunctionInliner {
     }
 }
 
+// ==================== 死代码消除器 ====================
+pub struct DeadCodeEliminator {
+    used_vars: HashSet<String>,
+}
+
+impl DeadCodeEliminator {
+    pub fn new() -> Self {
+        Self {
+            used_vars: HashSet::new(),
+        }
+    }
+    
+    pub fn eliminate(&mut self, insts: &[Instruction]) -> Vec<Instruction> {
+        // 第一遍：标记所有使用的变量
+        self.used_vars.clear();
+        self.mark_used_vars(insts);
+        
+        // 第二遍：移除未使用的赋值
+        let mut result = Vec::new();
+        for inst in insts {
+            if self.is_used(inst) {
+                result.push(inst.clone());
+            }
+        }
+        result
+    }
+    
+    fn mark_used_vars(&mut self, insts: &[Instruction]) {
+        for inst in insts {
+            match inst {
+                Instruction::Load { src, .. } => {
+                    self.used_vars.insert(src.clone());
+                },
+                Instruction::Add { left, right, .. } |
+                Instruction::Sub { left, right, .. } |
+                Instruction::Mul { left, right, .. } |
+                Instruction::Div { left, right, .. } |
+                Instruction::Mod { left, right, .. } |
+                Instruction::Eq { left, right, .. } |
+                Instruction::Ne { left, right, .. } |
+                Instruction::Lt { left, right, .. } |
+                Instruction::Le { left, right, .. } |
+                Instruction::Gt { left, right, .. } |
+                Instruction::Ge { left, right, .. } => {
+                    self.used_vars.insert(left.clone());
+                    self.used_vars.insert(right.clone());
+                },
+                Instruction::Return(Some(val)) => {
+                    self.used_vars.insert(val.clone());
+                },
+                Instruction::ReturnInPlace(val) => {
+                    self.used_vars.insert(val.clone());
+                },
+                Instruction::Call { args, .. } => {
+                    for arg in args {
+                        self.used_vars.insert(arg.clone());
+                    }
+                },
+                _ => {}
+            }
+        }
+    }
+    
+    fn is_used(&self, inst: &Instruction) -> bool {
+        match inst {
+            // 保留所有非赋值指令
+            Instruction::Return(_) | 
+            Instruction::ReturnInPlace(_) |
+            Instruction::Call { .. } |
+            Instruction::Br(_) |
+            Instruction::CondBr { .. } |
+            Instruction::Label(_) => true,
+            
+            // 对于Store，检查目标是否被使用
+            Instruction::Store { dest, .. } => {
+                self.used_vars.contains(dest)
+            },
+            
+            // 对于Alloca，检查变量是否被使用
+            Instruction::Alloca { dest, .. } => {
+                self.used_vars.contains(dest)
+            },
+            
+            // 对于算术运算，检查结果是否被使用
+            Instruction::Add { dest, .. } |
+            Instruction::Sub { dest, .. } |
+            Instruction::Mul { dest, .. } |
+            Instruction::Div { dest, .. } |
+            Instruction::Mod { dest, .. } |
+            Instruction::Load { dest, .. } => {
+                self.used_vars.contains(dest)
+            },
+            
+            _ => true,
+        }
+    }
+}
+
+// ==================== 公共子表达式消除器 ====================
+pub struct CommonSubexprEliminator {
+    expr_map: HashMap<String, String>,
+}
+
+impl CommonSubexprEliminator {
+    pub fn new() -> Self {
+        Self {
+            expr_map: HashMap::new(),
+        }
+    }
+    
+    pub fn eliminate(&mut self, insts: &[Instruction]) -> Vec<Instruction> {
+        self.expr_map.clear();
+        let mut result = Vec::new();
+        
+        for inst in insts {
+            match inst {
+                Instruction::Add { dest, left, right } => {
+                    let key = format!("add_{}_{}", left, right);
+                    if let Some(cached_dest) = self.expr_map.get(&key) {
+                        // 复用已计算的结果
+                        result.push(Instruction::Store {
+                            dest: dest.clone(),
+                            src: cached_dest.clone(),
+                        });
+                    } else {
+                        self.expr_map.insert(key, dest.clone());
+                        result.push(inst.clone());
+                    }
+                },
+                Instruction::Sub { dest, left, right } => {
+                    let key = format!("sub_{}_{}", left, right);
+                    if let Some(cached_dest) = self.expr_map.get(&key) {
+                        result.push(Instruction::Store {
+                            dest: dest.clone(),
+                            src: cached_dest.clone(),
+                        });
+                    } else {
+                        self.expr_map.insert(key, dest.clone());
+                        result.push(inst.clone());
+                    }
+                },
+                Instruction::Mul { dest, left, right } => {
+                    let key = format!("mul_{}_{}", left, right);
+                    if let Some(cached_dest) = self.expr_map.get(&key) {
+                        result.push(Instruction::Store {
+                            dest: dest.clone(),
+                            src: cached_dest.clone(),
+                        });
+                    } else {
+                        self.expr_map.insert(key, dest.clone());
+                        result.push(inst.clone());
+                    }
+                },
+                Instruction::Store { dest, .. } | 
+                Instruction::Call { dest: Some(dest), .. } => {
+                    // 失效所有相关的缓存
+                    self.expr_map.retain(|_, v| v != dest);
+                    result.push(inst.clone());
+                },
+                _ => {
+                    result.push(inst.clone());
+                }
+            }
+        }
+        
+        result
+    }
+}
+
+// ==================== 代数化简器 ====================
+pub struct AlgebraicSimplifier;
+
+impl AlgebraicSimplifier {
+    pub fn new() -> Self {
+        Self
+    }
+    
+    pub fn simplify(&self, insts: &[Instruction]) -> Vec<Instruction> {
+        insts.iter().map(|inst| self.simplify_instruction(inst)).collect()
+    }
+    
+    fn simplify_instruction(&self, inst: &Instruction) -> Instruction {
+        match inst {
+            // x + 0 = x
+            Instruction::Add { dest, left, right } if self.is_zero(right) => {
+                Instruction::Store {
+                    dest: dest.clone(),
+                    src: left.clone(),
+                }
+            },
+            Instruction::Add { dest, left, right } if self.is_zero(left) => {
+                Instruction::Store {
+                    dest: dest.clone(),
+                    src: right.clone(),
+                }
+            },
+            
+            // x - 0 = x
+            Instruction::Sub { dest, left, right } if self.is_zero(right) => {
+                Instruction::Store {
+                    dest: dest.clone(),
+                    src: left.clone(),
+                }
+            },
+            
+            // x * 0 = 0
+            Instruction::Mul { dest, left, right } if self.is_zero(left) || self.is_zero(right) => {
+                Instruction::Store {
+                    dest: dest.clone(),
+                    src: "const.i32.0".to_string(),
+                }
+            },
+            
+            // x * 1 = x
+            Instruction::Mul { dest, left, right } if self.is_one(right) => {
+                Instruction::Store {
+                    dest: dest.clone(),
+                    src: left.clone(),
+                }
+            },
+            Instruction::Mul { dest, left, right } if self.is_one(left) => {
+                Instruction::Store {
+                    dest: dest.clone(),
+                    src: right.clone(),
+                }
+            },
+            
+            // x / 1 = x
+            Instruction::Div { dest, left, right } if self.is_one(right) => {
+                Instruction::Store {
+                    dest: dest.clone(),
+                    src: left.clone(),
+                }
+            },
+            
+            _ => inst.clone(),
+        }
+    }
+    
+    fn is_zero(&self, var: &str) -> bool {
+        var == "const.i32.0" || var == "const.i64.0"
+    }
+    
+    fn is_one(&self, var: &str) -> bool {
+        var == "const.i32.1" || var == "const.i64.1"
+    }
+}
+
 pub struct Optimizer {
     pub constant_prop: ConstantPropagator,
     pub inliner: FunctionInliner,
+    pub dce: DeadCodeEliminator,
+    pub cse: CommonSubexprEliminator,
+    pub algebraic: AlgebraicSimplifier,
     pub opt_level: u32,
 }
 
@@ -355,6 +606,9 @@ impl Optimizer {
         Self {
             constant_prop: ConstantPropagator::new(),
             inliner: FunctionInliner::new(),
+            dce: DeadCodeEliminator::new(),
+            cse: CommonSubexprEliminator::new(),
+            algebraic: AlgebraicSimplifier::new(),
             opt_level,
         }
     }
@@ -364,28 +618,52 @@ impl Optimizer {
             return;
         }
 
-        for func in &mut module.functions {
-            self.optimize_function(func);
+        // 多轮迭代优化，直到收敛
+        for _ in 0..3 {
+            let mut changed = false;
+            
+            for func in &mut module.functions {
+                if self.optimize_function(func) {
+                    changed = true;
+                }
+            }
+            
+            if !changed {
+                break;
+            }
         }
     }
 
-    pub fn optimize_function(&mut self, func: &mut Function) {
+    pub fn optimize_function(&mut self, func: &mut Function) -> bool {
+        let original_len = func.body.len();
+        
+        // Level 1: 基础优化
         if self.opt_level >= 1 {
+            // 代数化简
+            func.body = self.algebraic.simplify(&func.body);
+            
+            // 常数传播
             self.constant_prop.analyze_function(func);
             func.body = self.constant_prop.optimize(&func.body);
+            
+            // 死代码消除
+            func.body = self.dce.eliminate(&func.body);
         }
 
+        // Level 2: 高级优化
         if self.opt_level >= 2 {
+            // 公共子表达式消除
+            func.body = self.cse.eliminate(&func.body);
+            
+            // 函数内联（谨慎使用）
             self.inliner.register_function(func.clone());
-            for inst in &mut func.body {
-                if let Instruction::Call { func: name, .. } = inst {
-                    if self.inliner.inlined_functions.contains_key(name) {
-                        *inst = Instruction::Nop;
-                    }
-                }
-            }
-            func.body.retain(|i| !matches!(i, Instruction::Nop));
+            func.body = self.inliner.inline_calls(&func.body);
+            
+            // 再次死代码消除
+            func.body = self.dce.eliminate(&func.body);
         }
+        
+        func.body.len() != original_len
     }
 }
 

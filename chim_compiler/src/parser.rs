@@ -64,7 +64,7 @@ impl Parser {
             Token::Return | Token::ReturnZh => {
                 self.parse_return_statement()
             },
-            Token::If | Token::IfZh | Token::Elif => {
+            Token::If | Token::IfZh | Token::Elif | Token::ElifZh => {
                 // 消费If或Elif关键字
                 self.advance()?;
                 let expr = self.parse_if_expression()?;
@@ -1101,7 +1101,7 @@ impl Parser {
         
         // 处理elif分支
         let mut else_branch = None;
-        if self.check(Token::Elif) {
+        if self.check(Token::Elif) || self.check(Token::ElifZh) {
             // 将elif转换为嵌套的if-else
             self.advance()?;
             let elif_expr = self.parse_if_expression()?;

@@ -2,6 +2,9 @@ use crate::ast::{self, Literal, StructField};
 use thiserror::Error;
 use std::collections::HashMap;
 use std::fmt;
+use crate::memory_layout::MemoryLayoutAnalyzer;
+use crate::group_manager::GroupManager;
+use crate::allocation::AllocationDecider;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Lifetime(pub String);
@@ -594,6 +597,8 @@ pub struct SemanticAnalyzer {
     pub borrow_checker: BorrowChecker,
     pub escape_analyzer: EscapeAnalyzer,
     pub loop_optimizer: LoopOptimizer,
+    pub memory_layout: MemoryLayoutAnalyzer,
+    pub group_manager: GroupManager,
     pub errors: Vec<SemanticError>,
     pub current_line: usize,
     pub current_column: usize,
@@ -606,6 +611,8 @@ impl SemanticAnalyzer {
             borrow_checker: BorrowChecker::new(),
             escape_analyzer: EscapeAnalyzer::new(),
             loop_optimizer: LoopOptimizer::new(),
+            memory_layout: MemoryLayoutAnalyzer::new(),
+            group_manager: GroupManager::new(),
             errors: Vec::new(),
             current_line: 1,
             current_column: 1,
@@ -822,6 +829,15 @@ impl SemanticAnalyzer {
             }
         }
         
+        // 内存布局分析和优化
+        let layout = self.memory_layout.analyze_struct(name, fields);
+        let savings = self.memory_layout.calculate_savings(name, fields);
+        
+        if savings > 0 {
+            println!("[优化] 结构体 '{}' 通过字段重排节省了 {} 字节 ({} -> {} 字节)", 
+                name, savings, layout.size + savings, layout.size);
+        }
+        
         // 定义结构体
         let symbol = Symbol {
             name: name.to_string(),
@@ -928,7 +944,30 @@ impl SemanticAnalyzer {
         Ok(())
     }
     
-    fn analyze_group_statement(&mut self, _name: &str, members: &[ast::Statement]) -> Result<(), Vec<SemanticError>> {
+    fn analyze_group_statement(&mut self, name: &str, members: &[ast::Statement]) -> Result<(), Vec<SemanticError>> {
+        // 收集组成员名称
+        let mut member_names = Vec::new();
+        
+        for member in members {
+            match member {
+                ast::Statement::Let { name, .. } => {
+                    member_names.push(name.clone());
+                },
+                _ => {
+                    // 组只能包含变量声明
+                    self.errors.push(SemanticError::InvalidSyntax(
+                        format!("Group '{}' can only contain variable declarations", name)
+                    ));
+                    return Err(self.errors.clone());
+                }
+            }
+        }
+        
+        // 注册组到组管理器
+        self.group_manager.register_group(name.to_string(), member_names);
+        
+        println!("[组生命周期] 注册组 '{}' (统一生命周期: '{})", name, name);
+        
         // 进入组作用域
         self.symbol_table.enter_scope();
         

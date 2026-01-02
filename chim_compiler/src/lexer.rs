@@ -23,6 +23,11 @@ pub enum Token {
     #[token("if")] If,
     #[token("elif")] Elif,
     #[token("else")] Else,
+    #[token("try")] Try,
+    #[token("catch")] Catch,
+    #[token("throw")] Throw,
+    #[token("break")] Break,
+    #[token("continue")] Continue,
     #[token("match")] Match,
     #[token("while")] While,
     #[token("for")] For,
@@ -62,6 +67,7 @@ pub enum Token {
     #[token("令")] LetZh,
     #[token("设")] VarZh,
     #[token("如果")] IfZh,
+    #[token("则若")] ElifZh,
     #[token("否则")] ElseZh,
     #[token("匹配")] MatchZh,
     #[token("当")] WhileZh,
@@ -156,6 +162,7 @@ pub enum Token {
     
     #[token("..")] Range,
     #[token("..=")] RangeInclusive,
+    #[token("::")] PathSep,
     
     // 标点符号
     #[token(".")] Dot,

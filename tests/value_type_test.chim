@@ -1,0 +1,66 @@
+// 测试值类型系统和内存布局优化
+
+// 测试1：内存布局优化
+struct BadLayout {
+    flag1: bool,
+    value: int,
+    flag2: bool
+}
+
+// 编译器应该优化为：
+// int(4) + bool(1) + bool(1) + 2填充 = 8字节
+// 而不是：bool(1) + 3填充 + int(4) + bool(1) + 3填充 = 12字节
+// 节省33%空间
+
+fn test_struct_layout() = {
+    let obj = BadLayout {
+        flag1: true,
+        value: 42,
+        flag2: false
+    };
+    println("BadLayout created")
+}
+
+// 测试2：组生命周期（暂时注释，需要特殊语法支持）
+// group UserData {
+//     let name: string
+//     let email: string
+//     let age: int
+// }
+// 
+// fn get_name(user: &UserData) -> &string = {
+//     return &user.name
+// }
+// 
+// fn test_group_lifetime() = {
+//     let user = UserData {
+//         name: "Alice",
+//         email: "alice@example.com",
+//         age: 30
+//     };
+//     let name_ref = get_name(&user);
+//     println(name_ref)
+// }
+
+// 测试3：栈分配优化
+struct Point {
+    x: float,
+    y: float
+}
+
+fn create_point() -> Point = {
+    return Point { x: 3.0, y: 4.0 }
+}
+
+fn test_stack_allocation() = {
+    let p1 = Point { x: 1.0, y: 2.0 };
+    let p2 = create_point();
+    println("Points created on stack")
+}
+
+fn main() = {
+    test_struct_layout();
+    // test_group_lifetime();
+    test_stack_allocation();
+    println("All tests passed!")
+}

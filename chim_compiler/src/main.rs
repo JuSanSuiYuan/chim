@@ -12,54 +12,62 @@ mod ir;
 mod codegen;
 mod wasm_codegen;
 mod optimizer;
+mod memory_layout;
+mod group_manager;
+mod allocation;
+mod rvo;
+mod backend;
+mod backends;
 
 use codegen::CodeGenerator;
 use wasm_codegen::TargetCodeGenerator;
 use optimizer::Optimizer;
+use rvo::RVOOptimizer;
+use backend::{BackendType, create_backend};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     
     if args.len() < 2 {
-        eprintln!("Usage: {} <input.chim> [target] [--opt <level>]", args[0]);
-        eprintln!("  Targets: wasm (default), native, ir");
+        eprintln!("Usage: {} <input.chim> [-t <target>] [-O <level>]", args[0]);
+        eprintln!("  Targets: wasm, native, llvm, qbe, tinycc, cranelift, fortran, asm, ir");
         eprintln!("  Optimization levels: 0 (none), 1 (basic), 2 (aggressive)");
+        eprintln!("\nExamples:");
+        eprintln!("  {} test.chim -t fortran -O 2", args[0]);
+        eprintln!("  {} test.chim -t asm -O 1", args[0]);
         process::exit(1);
     }
 
     let input_file = &args[1];
-    let mut target = args.get(2).map(|s| s.as_str()).unwrap_or("wasm");
+    let mut target = "wasm";
     let mut opt_level: u32 = 1;
     
     let mut i = 2;
     while i < args.len() {
         match args[i].as_str() {
+            "-t" | "--target" if i + 1 < args.len() => {
+                target = &args[i + 1];
+                i += 2;
+            },
             "--opt" if i + 1 < args.len() => {
                 opt_level = args[i + 1].parse().unwrap_or(1);
                 i += 2;
             },
-            "--opt=0" | "-O0" => {
+            "-O0" | "--opt=0" => {
                 opt_level = 0;
                 i += 1;
             },
-            "--opt=1" | "-O1" => {
+            "-O1" | "--opt=1" => {
                 opt_level = 1;
                 i += 1;
             },
-            "--opt=2" | "-O2" => {
+            "-O2" | "--opt=2" => {
                 opt_level = 2;
                 i += 1;
             },
-            _ if args[i].starts_with("--") => {
-                i += 1;
-            },
-            _ if target == "wasm" || target == "native" || target == "ir" => {
-                if args[i] != "wasm" && args[i] != "native" && args[i] != "ir" {
-                    target = "wasm";
-                } else {
-                    target = args[i].as_str();
-                }
-                i += 1;
+            "-O" if i + 1 < args.len() => {
+                opt_level = args[i + 1].parse().unwrap_or(1);
+                i += 2;
             },
             _ => {
                 i += 1;
@@ -117,65 +125,28 @@ fn main() {
             }
             
             // 代码生成
-            println!("\nGenerating code for target: {}", target);
+            println!("\n生成代码，目标后端: {}", target);
+            
+            // 生成IR
+            let mut ir_gen = codegen::IRGenerator::new();
+            let mut module = ir_gen.generate_module(&ast);
+            
+            // 应用优化
+            let mut optimizer = Optimizer::new(opt_level);
+            optimizer.optimize_module(&mut module);
+            
+            // 应用RVO优化
+            let mut rvo = RVOOptimizer::new();
+            rvo.optimize_module(&mut module);
             
             match target {
-                "wasm" => {
-                    let mut ir_gen = codegen::IRGenerator::new();
-                    let mut module = ir_gen.generate_module(&ast);
-                    
-                    let mut optimizer = Optimizer::new(opt_level);
-                    optimizer.optimize_module(&mut module);
-                    
-                    let wasm_gen = wasm_codegen::WASMGenerator::new();
-                    let wasm_code = wasm_gen.generate(&module);
-                    
-                    // 输出WASM代码
-                    let output_file = input_file.replace(".chim", ".wat");
-                    match fs::write(&output_file, &wasm_code) {
-                        Ok(_) => {
-                            println!("Generated WebAssembly text format: {}", output_file);
-                            println!("\nWASM output preview:");
-                            println!("{}", &wasm_code[..wasm_code.len().min(1000)]);
-                        },
-                        Err(err) => {
-                            eprintln!("Error writing output file: {}", err);
-                            process::exit(1);
-                        },
-                    }
-                },
-                "native" => {
-                    let mut ir_gen = codegen::IRGenerator::new();
-                    let mut module = ir_gen.generate_module(&ast);
-                    
-                    let mut optimizer = Optimizer::new(opt_level);
-                    optimizer.optimize_module(&mut module);
-                    
-                    let native_gen = wasm_codegen::NativeGenerator::default();
-                    let native_code = native_gen.generate(&module);
-                    
-                    // 输出C代码
-                    let output_file = input_file.replace(".chim", ".c");
-                    match fs::write(&output_file, &native_code) {
-                        Ok(_) => {
-                            println!("Generated C code: {}", output_file);
-                        },
-                        Err(err) => {
-                            eprintln!("Error writing output file: {}", err);
-                            process::exit(1);
-                        },
-                    }
-                },
                 "ir" => {
                     // 只输出IR
-                    let mut ir_gen = codegen::IRGenerator::new();
-                    let module = ir_gen.generate_module(&ast);
-                    
-                    println!("\nGenerated IR:");
+                    println!("\n生成的IR:");
                     for func in &module.functions {
                         println!("Function: {}", func.name);
                         for param in &func.params {
-                            println!("  Param: {} : {}", param.0, param.1);
+                            println!("  Param: {} : {:?}", param.0, param.1);
                         }
                         for inst in &func.body {
                             println!("  {:?}", inst);
@@ -183,9 +154,46 @@ fn main() {
                     }
                 },
                 _ => {
-                    eprintln!("Unknown target: {}", target);
-                    eprintln!("Supported targets: wasm, native, ir");
-                    process::exit(1);
+                    // 使用新的后端架构
+                    if let Some(backend_type) = BackendType::from_str(target) {
+                        let backend = create_backend(backend_type);
+                        println!("使用后端: {}", backend.name());
+                        
+                        match backend.generate(&module) {
+                            Ok(code) => {
+                                let ext = backend.file_extension();
+                                let output_file = input_file.replace(".chim", &format!(".{}", ext));
+                                
+                                match fs::write(&output_file, &code) {
+                                    Ok(_) => {
+                                        println!("生成代码成功: {}", output_file);
+                                        println!("\n代码预览:");
+                                        let preview = if code.len() > 1000 {
+                                            &code[..1000]
+                                        } else {
+                                            &code
+                                        };
+                                        println!("{}", preview);
+                                        if code.len() > 1000 {
+                                            println!("\n... (还有 {} 字节)", code.len() - 1000);
+                                        }
+                                    },
+                                    Err(err) => {
+                                        eprintln!("写入输出文件失败: {}", err);
+                                        process::exit(1);
+                                    },
+                                }
+                            },
+                            Err(err) => {
+                                eprintln!("代码生成失败: {}", err);
+                                process::exit(1);
+                            },
+                        }
+                    } else {
+                        eprintln!("未知的目标后端: {}", target);
+                        eprintln!("支持的后端: wasm, native, llvm, qbe, tinycc, cranelift, fortran, asm, ir");
+                        process::exit(1);
+                    }
                 },
             }
         },

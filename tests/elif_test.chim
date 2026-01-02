@@ -1,0 +1,37 @@
+// 测试中文 elif 关键字 "则若"
+
+fn test_grade(score: int) -> string = {
+    如果 score >= 90: {
+        return "优秀"
+    } 则若 score >= 80: {
+        return "良好"
+    } 则若 score >= 70: {
+        return "中等"
+    } 则若 score >= 60: {
+        return "及格"
+    } 否则: {
+        return "不及格"
+    }
+}
+
+// 混合使用英文和中文关键字
+fn test_mixed(x: int) -> int = {
+    if x > 100: {
+        return 1
+    } 则若 x > 50: {
+        return 2
+    } elif x > 10: {
+        return 3
+    } 否则: {
+        return 4
+    }
+}
+
+fn main() -> int = {
+    令 grade1: string = test_grade(95);
+    令 grade2: string = test_grade(75);
+    令 grade3: string = test_grade(55);
+    
+    let result: int = test_mixed(60);
+    返回 result
+}

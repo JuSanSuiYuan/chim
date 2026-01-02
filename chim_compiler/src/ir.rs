@@ -215,6 +215,7 @@ pub enum Instruction {
     },
     Label(String),
     Return(Option<String>),
+    ReturnInPlace(String),  // RVO优化：原地构造返回值
     
     // 引用操作
     Borrow {
