@@ -1,0 +1,51 @@
+# Chim generated QBE IL
+
+export function $println(l %s) {
+@start
+    ret
+}
+
+export function $print(l %s) {
+@start
+    ret
+}
+
+export function w $add(w %a, w %b) {
+@start
+    %.tmp1 =w add %a, %b
+    ret %.tmp1 # RVO
+}
+
+export function w $subtract(w %a, w %b) {
+@start
+    %.tmp2 =w sub %a, %b
+    ret %.tmp2 # RVO
+}
+
+export function w $multiply(w %a, w %b) {
+@start
+    %.tmp3 =w mul %a, %b
+    ret %.tmp3 # RVO
+}
+
+export function w $divide(w %a, w %b) {
+@start
+    %.tmp4 =w div %a, %b
+    ret %.tmp4 # RVO
+}
+
+export function w $modulo(w %a, w %b) {
+@start
+    # Mod { dest: ".tmp5", left: "a", right: "b" }
+    ret %.tmp5 # RVO
+}
+
+export function $main() {
+@start
+    %.tmp8 =w call $add(w %10, w %20)
+    %.tmp11 =w call $subtract(w %30, w %15)
+    %.tmp14 =w call $multiply(w %5, w %6)
+    %.tmp17 =w call $divide(w %100, w %10)
+    %.tmp20 =w call $modulo(w %17, w %5)
+}
+

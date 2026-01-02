@@ -56,6 +56,9 @@ impl NativeBackend {
     
     fn generate_instruction(&self, inst: &Instruction) -> String {
         match inst {
+            Instruction::Alloca { dest, ty } => {
+                format!("    {} {};\n", self.generate_type(ty), dest)
+            },
             Instruction::Add { dest, left, right } => {
                 format!("    int32_t {} = {} + {};\n", dest, left, right)
             },
@@ -67,6 +70,36 @@ impl NativeBackend {
             },
             Instruction::Div { dest, left, right } => {
                 format!("    int32_t {} = {} / {};\n", dest, left, right)
+            },
+            Instruction::Mod { dest, left, right } => {
+                format!("    int32_t {} = {} % {};\n", dest, left, right)
+            },
+            Instruction::Eq { dest, left, right } => {
+                format!("    bool {} = {} == {};\n", dest, left, right)
+            },
+            Instruction::Ne { dest, left, right } => {
+                format!("    bool {} = {} != {};\n", dest, left, right)
+            },
+            Instruction::Lt { dest, left, right } => {
+                format!("    bool {} = {} < {};\n", dest, left, right)
+            },
+            Instruction::Le { dest, left, right } => {
+                format!("    bool {} = {} <= {};\n", dest, left, right)
+            },
+            Instruction::Gt { dest, left, right } => {
+                format!("    bool {} = {} > {};\n", dest, left, right)
+            },
+            Instruction::Ge { dest, left, right } => {
+                format!("    bool {} = {} >= {};\n", dest, left, right)
+            },
+            Instruction::And { dest, left, right } => {
+                format!("    bool {} = {} && {};\n", dest, left, right)
+            },
+            Instruction::Or { dest, left, right } => {
+                format!("    bool {} = {} || {};\n", dest, left, right)
+            },
+            Instruction::Not { dest, src } => {
+                format!("    bool {} = !{};\n", dest, src)
             },
             Instruction::Store { dest, src } => {
                 format!("    {} = {};\n", dest, src)
@@ -81,7 +114,6 @@ impl NativeBackend {
                 "    return;\n".to_string()
             },
             Instruction::ReturnInPlace(value) => {
-                // RVO: C++编译器会自动优化
                 format!("    return {}; // RVO优化\n", value)
             },
             Instruction::Call { dest, func, args } => {
@@ -92,7 +124,16 @@ impl NativeBackend {
                     format!("    {}({});\n", func, args_str)
                 }
             },
-            _ => format!("    // {:?}\n", inst),
+            Instruction::Label(name) => {
+                format!("{}:\n", name)
+            },
+            Instruction::Br(target) => {
+                format!("    goto {};\n", target)
+            },
+            Instruction::CondBr { cond, true_bb, false_bb } => {
+                format!("    if ({}) goto {}; else goto {};\n", cond, true_bb, false_bb)
+            },
+            _ => format!("    // Unsupported: {:?}\n", inst),
         }
     }
 }

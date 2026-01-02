@@ -29,6 +29,37 @@ pub enum BackendType {
     Cranelift, // Cranelift IR
     Fortran,   // Fortran（科学计算优化）
     Asm,       // x86-64汇编
+    Clang,     // Clang C++（LLVM优化）
+    Flang,     // LLVM Flang Fortran
+    Java,      // Java 11+
+    JavaScript,// JavaScript ES6+
+    TypeScript,// TypeScript
+    CSharp,    // C# 9.0+
+    V,         // V语言
+    Nim,       // Nim语言
+    Kotlin,    // Kotlin 1.8+
+    Swift,     // Swift 5.0+
+    ObjectiveC,// Objective-C 2.0+
+    Cc8,       // 8cc (教育型)
+    GCC,       // GNU Compiler Collection
+    Rustc,     // Rust Compiler
+    ZigCC,     // Zig C Compiler
+    UCC,       // Universal C Compiler
+    Selfie,    // 自托管教育编译器
+    Cc9,       // 9cc
+    PGI,       // NVIDIA HPC
+    MSVC,      // Microsoft Visual C++
+    CompCert,  // 经验证的C编译器
+    LCC,       // 可重定向C编译器
+    Chibicc,   // chibicc (小型C编译器)
+    
+    // GPU后端
+    CUDA,      // NVIDIA CUDA
+    Vulkan,    // Vulkan Compute
+    Metal,     // Apple Metal
+    OpenCL,    // OpenCL (跨平台)
+    Mojo,      // Mojo (AI原生)
+    TileLang,  // Chim TileLang (AI/ML优化)
 }
 
 impl BackendType {
@@ -42,6 +73,38 @@ impl BackendType {
             "cranelift" | "clif" => Some(Self::Cranelift),
             "fortran" | "f90" | "f95" => Some(Self::Fortran),
             "asm" | "assembly" | "x86" | "x86-64" => Some(Self::Asm),
+            "clang" | "cpp" | "c++" | "cxx" => Some(Self::Clang),
+            "flang" | "fortran-llvm" => Some(Self::Flang),
+            "java" => Some(Self::Java),
+            "js" | "javascript" => Some(Self::JavaScript),
+            "ts" | "typescript" => Some(Self::TypeScript),
+            "cs" | "csharp" | "c#" => Some(Self::CSharp),
+            "v" | "vlang" => Some(Self::V),
+            "nim" => Some(Self::Nim),
+            "kotlin" | "kt" => Some(Self::Kotlin),
+            "swift" => Some(Self::Swift),
+            "objc" | "objective-c" | "objectivec" => Some(Self::ObjectiveC),
+            "8cc" => Some(Self::Cc8),
+            "gcc" => Some(Self::GCC),
+            "rustc" | "rust" => Some(Self::Rustc),
+            "zig" | "zigcc" | "zig-cc" => Some(Self::ZigCC),
+            "ucc" => Some(Self::UCC),
+            "selfie" => Some(Self::Selfie),
+            "9cc" => Some(Self::Cc9),
+            "pgi" => Some(Self::PGI),
+            "msvc" => Some(Self::MSVC),
+            "compcert" => Some(Self::CompCert),
+            "lcc" => Some(Self::LCC),
+            "chibicc" => Some(Self::Chibicc),
+            
+            // GPU后端
+            "cuda" => Some(Self::CUDA),
+            "vulkan" | "vulkan-compute" | "comp" => Some(Self::Vulkan),
+            "metal" => Some(Self::Metal),
+            "opencl" | "cl" => Some(Self::OpenCL),
+            "mojo" => Some(Self::Mojo),
+            "tilelang" | "tile" | "国产" | "北大" | "deepseek" => Some(Self::TileLang),
+            
             _ => None,
         }
     }
@@ -56,6 +119,37 @@ impl BackendType {
             Self::Cranelift,
             Self::Fortran,
             Self::Asm,
+            Self::Clang,
+            Self::Flang,
+            Self::Java,
+            Self::JavaScript,
+            Self::TypeScript,
+            Self::CSharp,
+            Self::V,
+            Self::Nim,
+            Self::Kotlin,
+            Self::Swift,
+            Self::ObjectiveC,
+            Self::Cc8,
+            Self::GCC,
+            Self::Rustc,
+            Self::ZigCC,
+            Self::UCC,
+            Self::Selfie,
+            Self::Cc9,
+            Self::PGI,
+            Self::MSVC,
+            Self::CompCert,
+            Self::LCC,
+            Self::Chibicc,
+            
+            // GPU后端
+            Self::CUDA,
+            Self::Vulkan,
+            Self::Metal,
+            Self::OpenCL,
+            Self::Mojo,
+            Self::TileLang,
         ]
     }
 }
@@ -71,5 +165,36 @@ pub fn create_backend(backend_type: BackendType) -> Box<dyn CodegenBackend> {
         BackendType::Cranelift => Box::new(crate::backends::cranelift::CraneliftBackend::new()),
         BackendType::Fortran => Box::new(crate::backends::fortran::FortranBackend::new()),
         BackendType::Asm => Box::new(crate::backends::asm::AsmBackend::new()),
+        BackendType::Clang => Box::new(crate::backends::clang::ClangBackend::new()),
+        BackendType::Flang => Box::new(crate::backends::flang::FlangBackend::new()),
+        BackendType::Java => Box::new(crate::backends::java::JavaBackend::new()),
+        BackendType::JavaScript => Box::new(crate::backends::javascript::JavaScriptBackend::new()),
+        BackendType::TypeScript => Box::new(crate::backends::typescript::TypeScriptBackend::new()),
+        BackendType::CSharp => Box::new(crate::backends::csharp::CSharpBackend::new()),
+        BackendType::V => Box::new(crate::backends::v::VBackend::new()),
+        BackendType::Nim => Box::new(crate::backends::nim::NimBackend::new()),
+        BackendType::Kotlin => Box::new(crate::backends::kotlin::KotlinBackend::new()),
+        BackendType::Swift => Box::new(crate::backends::swift::SwiftBackend::new()),
+        BackendType::ObjectiveC => Box::new(crate::backends::objc::ObjectiveCBackend::new()),
+        BackendType::Cc8 => Box::new(crate::backends::cc8::Cc8Backend::new()),
+        BackendType::GCC => Box::new(crate::backends::gcc::GCCBackend::new()),
+        BackendType::Rustc => Box::new(crate::backends::rustc::RustcBackend::new()),
+        BackendType::ZigCC => Box::new(crate::backends::zigcc::ZigCCBackend::new()),
+        BackendType::UCC => Box::new(crate::backends::ucc::UCCBackend::new()),
+        BackendType::Selfie => Box::new(crate::backends::selfie::SelfieBackend::new()),
+        BackendType::Cc9 => Box::new(crate::backends::cc9::Cc9Backend::new()),
+        BackendType::PGI => Box::new(crate::backends::pgi::PGIBackend::new()),
+        BackendType::MSVC => Box::new(crate::backends::msvc::MSVCBackend::new()),
+        BackendType::CompCert => Box::new(crate::backends::compcert::CompCertBackend::new()),
+        BackendType::LCC => Box::new(crate::backends::lcc::LCCBackend::new()),
+        BackendType::Chibicc => Box::new(crate::backends::chibicc::ChibiccBackend::new()),
+        
+        // GPU后端
+        BackendType::CUDA => Box::new(crate::backends::cuda::CUDABackend::new()),
+        BackendType::Vulkan => Box::new(crate::backends::vulkan::VulkanBackend::new()),
+        BackendType::Metal => Box::new(crate::backends::metal::MetalBackend::new()),
+        BackendType::OpenCL => Box::new(crate::backends::opencl::OpenCLBackend::new()),
+        BackendType::Mojo => Box::new(crate::backends::mojo::MojoBackend::new()),
+        BackendType::TileLang => Box::new(crate::backends::tilelang::TileLangBackend::new()),
     }
 }

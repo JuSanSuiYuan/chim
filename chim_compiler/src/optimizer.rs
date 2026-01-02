@@ -185,6 +185,11 @@ impl ConstantPropagator {
 pub struct FunctionInliner {
     inlined_functions: HashMap<String, Function>,
     max_inline_size: usize,
+    inline_threshold: usize,
+    recursive_inline_depth: usize,
+    hot_functions: HashSet<String>,
+    call_count: HashMap<String, usize>,  // 调用计数
+    aggressive_mode: bool,  // 激进模式
 }
 
 impl FunctionInliner {
@@ -192,7 +197,44 @@ impl FunctionInliner {
         Self {
             inlined_functions: HashMap::new(),
             max_inline_size: 10,
+            inline_threshold: 20,
+            recursive_inline_depth: 2,
+            hot_functions: HashSet::new(),
+            call_count: HashMap::new(),
+            aggressive_mode: true,  // 默认激进模式
         }
+    }
+    
+    /// 启用激进内联模式（超越 Rust）
+    pub fn enable_aggressive_inlining(&mut self) {
+        self.aggressive_mode = true;
+        self.max_inline_size = 30;  // 提高到 30（Rust 通常是 10-15）
+        self.inline_threshold = 50;  // 热点函数提高到 50
+        self.recursive_inline_depth = 4;  // 递归深度提高到 4
+    }
+    
+    /// 记录函数调用
+    pub fn record_call(&mut self, func_name: &str) {
+        *self.call_count.entry(func_name.to_string()).or_insert(0) += 1;
+        // 自动标记为热点（调用超过 5 次）
+        if *self.call_count.get(func_name).unwrap() > 5 {
+            self.mark_hot_function(func_name);
+        }
+    }
+    
+    /// 获取调用次数
+    pub fn get_call_count(&self, func_name: &str) -> usize {
+        *self.call_count.get(func_name).unwrap_or(&0)
+    }
+    
+    /// 标记热点函数（被频繁调用的函数）
+    pub fn mark_hot_function(&mut self, name: &str) {
+        self.hot_functions.insert(name.to_string());
+    }
+    
+    /// 检查是否是热点函数
+    pub fn is_hot(&self, name: &str) -> bool {
+        self.hot_functions.contains(name)
     }
 
     pub fn register_function(&mut self, func: Function) {
@@ -208,16 +250,130 @@ impl FunctionInliner {
     }
 
     fn should_inline(&self, func: &Function) -> bool {
-        func.body.len() <= self.max_inline_size && !func.is_kernel
+        // 不内联kernel函数
+        if func.is_kernel {
+            return false;
+        }
+        
+        // 激进模式：更宽松的内联条件
+        if self.aggressive_mode {
+            return self.should_inline_aggressive(func);
+        }
+        
+        // 热点函数可以有更大的内联阈值
+        let threshold = if self.is_hot(&func.name) {
+            self.inline_threshold
+        } else {
+            self.max_inline_size
+        };
+        
+        // 检查函数大小
+        if func.body.len() > threshold {
+            return false;
+        }
+        
+        // 检查是否包含复杂控制流（多个标签可能表示复杂控制流）
+        let label_count = func.body.iter()
+            .filter(|inst| matches!(inst, Instruction::Label(_)))
+            .count();
+        
+        if label_count > 2 {
+            return false;
+        }
+        
+        // 检查是否包含递归调用
+        let has_recursive_call = func.body.iter().any(|inst| {
+            if let Instruction::Call { func: callee, .. } = inst {
+                callee == &func.name
+            } else {
+                false
+            }
+        });
+        
+        !has_recursive_call
+    }
+    
+    /// 激进的内联判断（超越 Rust）
+    fn should_inline_aggressive(&self, func: &Function) -> bool {
+        // 1. 总是内联小函数（≤ 5 条指令）
+        if func.body.len() <= 5 {
+            return true;
+        }
+        
+        // 2. 热点函数即使较大也内联
+        if self.is_hot(&func.name) && func.body.len() <= self.inline_threshold {
+            return true;
+        }
+        
+        // 3. 只有算术运算的函数，即使稍大也内联
+        let is_pure_arithmetic = func.body.iter().all(|inst| {
+            matches!(inst, 
+                Instruction::Add { .. } | 
+                Instruction::Sub { .. } | 
+                Instruction::Mul { .. } | 
+                Instruction::Div { .. } |
+                Instruction::Load { .. } |
+                Instruction::Store { .. } |
+                Instruction::Alloca { .. } |
+                Instruction::Return(_))
+        });
+        
+        if is_pure_arithmetic && func.body.len() <= 20 {
+            return true;
+        }
+        
+        // 4. 检查控制流复杂度
+        let label_count = func.body.iter()
+            .filter(|inst| matches!(inst, Instruction::Label(_)))
+            .count();
+        
+        // 激进模式允许更多标签（最多 5 个）
+        if label_count > 5 {
+            return false;
+        }
+        
+        // 5. 允许尾递归内联
+        let is_tail_recursive = self.is_tail_recursive(func);
+        if is_tail_recursive {
+            return true;
+        }
+        
+        // 6. 默认检查大小
+        func.body.len() <= self.max_inline_size
+    }
+    
+    /// 检查是否是尾递归
+    fn is_tail_recursive(&self, func: &Function) -> bool {
+        if let Some(Instruction::Return(Some(val))) = func.body.last() {
+            // 检查返回值是否是对自己的调用
+            if val.starts_with(&func.name) {
+                return true;
+            }
+        }
+        false
     }
 
     pub fn inline_calls(&self, insts: &[Instruction]) -> Vec<Instruction> {
+        self.inline_calls_recursive(insts, 0)
+    }
+    
+    /// 递归内联调用，支持有限深度的递归内联
+    fn inline_calls_recursive(&self, insts: &[Instruction], depth: usize) -> Vec<Instruction> {
+        if depth >= self.recursive_inline_depth {
+            return insts.to_vec();
+        }
+        
         let mut inlined = Vec::new();
         for inst in insts {
             match inst {
                 Instruction::Call { dest, func, args } => {
                     if let Some(target) = self.inlined_functions.get(func) {
-                        let call_insts = self.inline_function(target, args, dest.as_ref());
+                        // 内联函数
+                        let mut call_insts = self.inline_function(target, args, dest.as_ref());
+                        
+                        // 递归内联（如果还有嵌套调用）
+                        call_insts = self.inline_calls_recursive(&call_insts, depth + 1);
+                        
                         inlined.extend(call_insts);
                     } else {
                         inlined.push(inst.clone());

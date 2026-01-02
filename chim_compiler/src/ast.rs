@@ -158,6 +158,22 @@ pub enum Statement {
         name: String,
         members: Vec<Statement>,
     },
+    // ECS实体声明
+    Entity {
+        name: String,
+        components: Vec<String>,
+    },
+    // ECS组件声明
+    Component {
+        name: String,
+        fields: Vec<StructField>,
+    },
+    // ECS系统声明
+    System {
+        name: String,
+        query: Vec<String>,  // 查询的组件类型
+        body: Expression,
+    },
     // 返回语句
     Return(Option<Expression>),
     // 循环语句
@@ -407,6 +423,29 @@ impl Display for Statement {
             },
             Statement::Import(path) => write!(f, "import \"{path}\";")?,
             Statement::ImportAs(path, alias) => write!(f, "import \"{path}\" as {alias};")?,
+            // ECS声明
+            Statement::Entity { name, components } => {
+                write!(f, "entity {name} {{")?;
+                for comp in components {
+                    write!(f, " {comp}")?;
+                }
+                write!(f, " }}" )?
+            },
+            Statement::Component { name, fields } => {
+                write!(f, "component {name} {{")?;
+                for field in fields {
+                    write!(f, "\n  {field};")?;
+                }
+                write!(f, "\n}}" )?
+            },
+            Statement::System { name, query, body } => {
+                write!(f, "system {name} query(")?;
+                for (i, comp) in query.iter().enumerate() {
+                    if i > 0 { write!(f, ", ")?; }
+                    write!(f, "{comp}")?;
+                }
+                write!(f, ") {body}" )?
+            },
         }
         Ok(())
     }

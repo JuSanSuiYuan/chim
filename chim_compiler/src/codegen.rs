@@ -12,6 +12,8 @@ pub struct IRGenerator {
     pub current_function: Option<Function>,
     pub temp_counter: usize,
     pub label_counter: usize,
+    pub last_temp: Option<String>,  // 追踪最后生成的临时变量
+    pub param_names: Vec<String>,    // 记录当前函数的参数名
 }
 
 impl IRGenerator {
@@ -21,12 +23,16 @@ impl IRGenerator {
             current_function: None,
             temp_counter: 0,
             label_counter: 0,
+            last_temp: None,
+            param_names: Vec::new(),
         }
     }
     
     pub fn fresh_temp(&mut self) -> String {
         self.temp_counter += 1;
-        format!(".tmp{}", self.temp_counter)
+        let temp = format!(".tmp{}", self.temp_counter);
+        self.last_temp = Some(temp.clone());
+        temp
     }
     
     pub fn fresh_label(&mut self) -> String {
@@ -83,12 +89,16 @@ impl CodeGenerator for IRGenerator {
                 );
                 func.is_public = true;
                 
+                // 保存参数名
+                self.param_names.clear();
+                
                 // 转换参数
                 for param in params {
                     let ty = IRGenerator::convert_type(
                         param.ty.as_deref().unwrap_or("int")
                     );
                     func.params.push((param.name.clone(), ty));
+                    self.param_names.push(param.name.clone());
                 }
                 
                 // 保存当前函数并生成函数体
@@ -100,6 +110,7 @@ impl CodeGenerator for IRGenerator {
                 
                 // 恢复之前函数
                 self.current_function = old_func;
+                self.param_names.clear();
                 
                 Some(func)
             },
@@ -110,6 +121,12 @@ impl CodeGenerator for IRGenerator {
                     struct_.fields.push((field.name.clone(), ty));
                 }
                 self.module.add_struct(struct_);
+                None
+            },
+            // ECS声明 - 暂时跳过
+            ast::Statement::Entity { .. } | 
+            ast::Statement::Component { .. } | 
+            ast::Statement::System { .. } => {
                 None
             },
             _ => None,
@@ -124,28 +141,20 @@ impl CodeGenerator for IRGenerator {
                 let dest = self.fresh_temp();
                 match lit {
                     ast::Literal::Integer(n) => {
-                        insts.push(Instruction::Load {
-                            dest: dest.clone(),
-                            src: format!("const.i32.{}", n),
-                        });
+                        // 对于整数字面量，直接使用数值，不生成Load指令
+                        self.last_temp = Some(n.to_string());
                     },
                     ast::Literal::Float(f) => {
-                        insts.push(Instruction::Load {
-                            dest: dest.clone(),
-                            src: format!("const.f32.{}", f),
-                        });
+                        self.last_temp = Some(f.to_string());
                     },
                     ast::Literal::String(s) => {
                         insts.push(Instruction::Load {
                             dest: dest.clone(),
-                            src: format!("const.string.\"{}\"", s),
+                            src: format!("\"{}\" /* string */", s),
                         });
                     },
                     ast::Literal::Boolean(b) => {
-                        insts.push(Instruction::Load {
-                            dest: dest.clone(),
-                            src: if *b { "const.true" } else { "const.false" }.to_string(),
-                        });
+                        self.last_temp = Some(if *b { "1" } else { "0" }.to_string());
                     },
                     _ => {}
                 }
@@ -153,21 +162,27 @@ impl CodeGenerator for IRGenerator {
             },
             
             ast::Expression::Identifier(name) => {
-                let dest = self.fresh_temp();
-                insts.push(Instruction::Load {
-                    dest: dest.clone(),
-                    src: name.clone(),
-                });
+                // 如果是函数参数或已定义的变量，直接使用名字，不生成Load
+                if self.param_names.contains(name) {
+                    self.last_temp = Some(name.clone());
+                } else {
+                    let dest = self.fresh_temp();
+                    insts.push(Instruction::Load {
+                        dest: dest.clone(),
+                        src: name.clone(),
+                    });
+                }
                 insts
             },
             
             ast::Expression::BinaryOp { left, op, right } => {
                 insts.extend(self.generate_expression(left));
+                let left_temp = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
+                
                 insts.extend(self.generate_expression(right));
+                let right_temp = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
                 
                 let dest = self.fresh_temp();
-                let left_temp = format!(".tmp{}", self.temp_counter - 1);
-                let right_temp = format!(".tmp{}", self.temp_counter);
                 
                 let op_inst = match op {
                     ast::BinaryOperator::Add => Instruction::Add {
@@ -243,13 +258,13 @@ impl CodeGenerator for IRGenerator {
             },
             
             ast::Expression::Call { callee, args } => {
+                let mut arg_temps = Vec::new();
                 for arg in args {
                     insts.extend(self.generate_expression(arg));
+                    if let Some(ref temp) = self.last_temp {
+                        arg_temps.push(temp.clone());
+                    }
                 }
-                
-                let arg_temps: Vec<String> = (0..args.len())
-                    .map(|i| format!(".tmp{}", self.temp_counter - args.len() + i + 1))
-                    .collect();
                 
                 let dest = if let ast::Expression::Identifier(name) = callee.as_ref() {
                     if name != "print" && name != "println" {
@@ -276,8 +291,7 @@ impl CodeGenerator for IRGenerator {
             
             ast::Expression::If { condition, then_branch, else_branch } => {
                 insts.extend(self.generate_expression(condition));
-                
-                let cond_temp = format!(".tmp{}", self.temp_counter);
+                let cond_temp = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
                 
                 let then_label = self.fresh_label();
                 let else_label = self.fresh_label();
@@ -308,6 +322,7 @@ impl CodeGenerator for IRGenerator {
             },
             
             ast::Expression::Block(stmts) => {
+                // 处理块中的每个语句
                 for stmt in stmts {
                     match stmt {
                         ast::Statement::Expression(expr) => {
@@ -315,17 +330,20 @@ impl CodeGenerator for IRGenerator {
                         },
                         ast::Statement::Let { name, ty, value, .. } => {
                             insts.extend(self.generate_expression(value));
+                            let src_temp = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
                             
-                            let src_temp = format!(".tmp{}", self.temp_counter);
+                            // 生成Alloca指令
+                            let ir_type = if let Some(t) = ty {
+                                IRGenerator::convert_type(t)
+                            } else {
+                                IRType::Int32  // 默认类型
+                            };
+                            insts.push(Instruction::Alloca {
+                                dest: name.clone(),
+                                ty: ir_type,
+                            });
                             
-                            if ty.is_some() {
-                                let ir_type = IRGenerator::convert_type(ty.as_ref().unwrap());
-                                insts.push(Instruction::Alloca {
-                                    dest: name.clone(),
-                                    ty: ir_type,
-                                });
-                            }
-                            
+                            // 生成Store指令
                             insts.push(Instruction::Store {
                                 dest: name.clone(),
                                 src: src_temp,
@@ -333,7 +351,8 @@ impl CodeGenerator for IRGenerator {
                         },
                         ast::Statement::Return(Some(expr)) => {
                             insts.extend(self.generate_expression(expr));
-                            insts.push(Instruction::Return(Some(format!(".tmp{}", self.temp_counter))));
+                            let ret_temp = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
+                            insts.push(Instruction::Return(Some(ret_temp)));
                         },
                         ast::Statement::Return(None) => {
                             insts.push(Instruction::Return(None));
@@ -346,9 +365,9 @@ impl CodeGenerator for IRGenerator {
             
             ast::Expression::UnaryOp { op, expr } => {
                 insts.extend(self.generate_expression(expr));
+                let src = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
                 
                 let dest = self.fresh_temp();
-                let src = format!(".tmp{}", self.temp_counter);
                 
                 match op {
                     ast::UnaryOperator::Neg => {
@@ -384,8 +403,8 @@ impl CodeGenerator for IRGenerator {
             
             ast::Expression::Match { expr, cases } => {
                 insts.extend(self.generate_expression(expr));
+                let expr_temp = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
                 
-                let expr_temp = format!(".tmp{}", self.temp_counter);
                 let end_label = self.fresh_label();
                 let mut first_case = true;
                 
@@ -417,11 +436,12 @@ impl CodeGenerator for IRGenerator {
             
             ast::Expression::Index { array, index } => {
                 insts.extend(self.generate_expression(array));
+                let arr_temp = self.last_temp.clone().unwrap_or_else(|| "arr".to_string());
+                
                 insts.extend(self.generate_expression(index));
+                let idx_temp = self.last_temp.clone().unwrap_or_else(|| "0".to_string());
                 
                 let dest = self.fresh_temp();
-                let arr_temp = format!(".tmp{}", self.temp_counter - 2);
-                let idx_temp = format!(".tmp{}", self.temp_counter - 1);
                 
                 insts.push(Instruction::GetElementPtr {
                     dest: dest.clone(),

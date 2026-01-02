@@ -63,6 +63,13 @@ pub enum Token {
     #[token("Unit")] Unit,
     #[token("@kernel")] KernelAttr,
     
+    // ECS关键字
+    #[token("entity")] Entity,
+    #[token("component")] Component,
+    #[token("system")] System,
+    #[token("query")] Query,
+    #[token("with")] With,
+    
     // 中文关键字
     #[token("令")] LetZh,
     #[token("设")] VarZh,

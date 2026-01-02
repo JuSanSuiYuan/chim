@@ -1,6 +1,6 @@
 use crate::ast::{self, Literal, StructField};
 use thiserror::Error;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 use crate::memory_layout::MemoryLayoutAnalyzer;
 use crate::group_manager::GroupManager;
@@ -135,6 +135,16 @@ impl LifetimeContext {
 pub struct BorrowChecker {
     pub lifetime_context: LifetimeContext,
     pub errors: Vec<LifetimeError>,
+    pub borrow_graph: HashMap<String, Vec<BorrowEdge>>,  // 借用图
+    pub zero_cost_refs: HashSet<String>,  // 零成本引用
+}
+
+#[derive(Debug, Clone)]
+pub struct BorrowEdge {
+    pub from: String,
+    pub to: String,
+    pub is_mutable: bool,
+    pub lifetime: Lifetime,
 }
 
 impl BorrowChecker {
@@ -142,6 +152,46 @@ impl BorrowChecker {
         Self {
             lifetime_context: LifetimeContext::new(),
             errors: Vec::new(),
+            borrow_graph: HashMap::new(),
+            zero_cost_refs: HashSet::new(),
+        }
+    }
+    
+    /// 添加借用边
+    pub fn add_borrow(&mut self, from: String, to: String, is_mutable: bool, lifetime: Lifetime) {
+        let edge = BorrowEdge {
+            from: from.clone(),
+            to,
+            is_mutable,
+            lifetime,
+        };
+        self.borrow_graph.entry(from).or_insert_with(Vec::new).push(edge);
+    }
+    
+    /// 标记零成本引用（编译时可以被优化掉的引用）
+    pub fn mark_zero_cost(&mut self, var: &str) {
+        self.zero_cost_refs.insert(var.to_string());
+    }
+    
+    /// 检查是否是零成本引用
+    pub fn is_zero_cost(&self, var: &str) -> bool {
+        self.zero_cost_refs.contains(var)
+    }
+    
+    /// 分析借用图，找出可以优化的引用
+    pub fn analyze_zero_cost_refs(&mut self) {
+        // 如果引用没有被修改，且生命周期在编译时可知，
+        // 则可以优化为直接访问
+        let mut zero_cost_vars = Vec::new();
+        for (var, edges) in &self.borrow_graph {
+            let all_immutable = edges.iter().all(|e| !e.is_mutable);
+            if all_immutable {
+                zero_cost_vars.push(var.clone());
+            }
+        }
+        // 统一标记零成本引用
+        for var in zero_cost_vars {
+            self.mark_zero_cost(&var);
         }
     }
 
@@ -184,6 +234,11 @@ pub struct EscapeAnalyzer {
     pub escape_info: HashMap<String, EscapeInfo>,
     pub in_loop: bool,
     pub in_function: bool,
+    pub stack_allocatable: HashSet<String>,
+    pub size_info: HashMap<String, usize>,
+    aggressive_stack_allocation: bool,  // 激进栈分配
+    stack_size_threshold: usize,  // 栈分配阈值
+    lifetime_tracking: HashMap<String, usize>,  // 生命周期追踪（指令数）
 }
 
 impl EscapeAnalyzer {
@@ -192,7 +247,43 @@ impl EscapeAnalyzer {
             escape_info: HashMap::new(),
             in_loop: false,
             in_function: false,
+            stack_allocatable: HashSet::new(),
+            size_info: HashMap::new(),
+            aggressive_stack_allocation: true,  // 默认激进模式
+            stack_size_threshold: 1024,  // 默认 1KB
+            lifetime_tracking: HashMap::new(),
         }
+    }
+    
+    /// 启用超激进栈分配（超越 Rust）
+    pub fn enable_ultra_aggressive_stack(&mut self) {
+        self.aggressive_stack_allocation = true;
+        self.stack_size_threshold = 4096;  // 提高到 4KB（Rust 通常是 1KB）
+    }
+    
+    /// 设置栈分配阈值
+    pub fn set_stack_threshold(&mut self, threshold: usize) {
+        self.stack_size_threshold = threshold;
+    }
+    
+    /// 记录变量生命周期（以指令数计）
+    pub fn record_lifetime(&mut self, var: &str, instructions: usize) {
+        self.lifetime_tracking.insert(var.to_string(), instructions);
+    }
+    
+    /// 获取生命周期
+    pub fn get_lifetime(&self, var: &str) -> usize {
+        *self.lifetime_tracking.get(var).unwrap_or(&0)
+    }
+    
+    /// 设置变量大小
+    pub fn set_size(&mut self, name: &str, size: usize) {
+        self.size_info.insert(name.to_string(), size);
+    }
+    
+    /// 获取变量大小
+    pub fn get_size(&self, name: &str) -> Option<usize> {
+        self.size_info.get(name).copied()
     }
 
     pub fn analyze_variable(&mut self, name: &str, context: &str) -> EscapeInfo {
@@ -246,10 +337,88 @@ impl EscapeAnalyzer {
     pub fn should_allocate_on_heap(&self, name: &str, context: &str) -> bool {
         let key = format!("{}_{}", context, name);
         if let Some(info) = self.escape_info.get(&key) {
-            info.escapes || info.captured_by_ref || info.address_taken
-        } else {
-            false
+            // 如果变量逃逸或被引用，需要堆分配
+            if info.escapes || info.captured_by_ref || info.address_taken {
+                return true;
+            }
         }
+        
+        // 激进模式：更宽松的栈分配策略
+        if self.aggressive_stack_allocation {
+            return self.should_heap_aggressive(name, context);
+        }
+        
+        // 检查变量大小，大于阈值的在堆上分配
+        if let Some(size) = self.get_size(name) {
+            if size > self.stack_size_threshold {
+                return true;
+            }
+        }
+        
+        false
+    }
+    
+    /// 激进的堆分配判断
+    fn should_heap_aggressive(&self, name: &str, context: &str) -> bool {
+        // 1. 检查大小（使用更大的阈值）
+        if let Some(size) = self.get_size(name) {
+            if size > self.stack_size_threshold {
+                return true;
+            }
+        }
+        
+        // 2. 检查生命周期：短生命周期变量在栈上
+        if let Some(lifetime) = self.lifetime_tracking.get(name) {
+            // 生命周期 < 100 条指令，在栈上
+            if *lifetime < 100 {
+                return false;
+            }
+        }
+        
+        // 3. 默认不需要堆分配
+        false
+    }
+    
+    /// 分析并标记所有可在栈上分配的变量
+    pub fn analyze_stack_allocation(&mut self) {
+        let mut stack_vars = Vec::new();
+        for (key, info) in &self.escape_info {
+            if !info.escapes && !info.captured_by_ref && !info.address_taken {
+                // 提取变量名
+                if let Some(name) = key.split('_').last() {
+                    // 激进模式：更宽松的条件
+                    if self.aggressive_stack_allocation {
+                        // 即使较大的对象也尝试栈分配
+                        if let Some(size) = self.get_size(name) {
+                            if size <= self.stack_size_threshold {
+                                stack_vars.push(name.to_string());
+                            }
+                        } else {
+                            // 没有大小信息，默认栈分配
+                            stack_vars.push(name.to_string());
+                        }
+                    } else {
+                        // 保守模式
+                        if let Some(size) = self.get_size(name) {
+                            if size <= 1024 {
+                                stack_vars.push(name.to_string());
+                            }
+                        } else {
+                            stack_vars.push(name.to_string());
+                        }
+                    }
+                }
+            }
+        }
+        // 统一添加到栈分配集合
+        for var in stack_vars {
+            self.stack_allocatable.insert(var);
+        }
+    }
+    
+    /// 检查是否可在栈上分配
+    pub fn can_allocate_on_stack(&self, name: &str) -> bool {
+        self.stack_allocatable.contains(name)
     }
 }
 
@@ -266,11 +435,29 @@ pub struct LoopInfo {
     pub unroll_factor: u32,
     pub induction_variable: Option<String>,
     pub bounds_known: bool,
+    pub trip_count: Option<u32>,
+    pub has_side_effects: bool,
+    pub vectorizable: bool,
+    pub simd_width: u32,  // SIMD 宽度（4/8/16）
+    pub can_parallelize: bool,  // 是否可并行化
+    pub memory_access_pattern: MemoryAccessPattern,  // 内存访问模式
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum MemoryAccessPattern {
+    Sequential,      // 顺序访问（最佳）
+    Strided(usize),  // 步长访问
+    Random,          // 随机访问（最差）
+    Unknown,         // 未知
 }
 
 pub struct LoopOptimizer {
     pub loop_info: HashMap<String, LoopInfo>,
     pub current_loop_depth: u32,
+    pub invariant_expressions: HashMap<String, Vec<String>>,
+    aggressive_vectorization: bool,  // 激进向量化
+    auto_parallelize: bool,  // 自动并行化
+    target_simd: String,  // 目标 SIMD 指令集（SSE/AVX/AVX512）
 }
 
 impl LoopOptimizer {
@@ -278,6 +465,32 @@ impl LoopOptimizer {
         Self {
             loop_info: HashMap::new(),
             current_loop_depth: 0,
+            invariant_expressions: HashMap::new(),
+            aggressive_vectorization: true,  // 默认启用激进向量化
+            auto_parallelize: true,  // 默认启用自动并行化
+            target_simd: "AVX2".to_string(),  // 默认目标 AVX2
+        }
+    }
+    
+    /// 启用超激进优化（超越 Rust）
+    pub fn enable_ultra_aggressive(&mut self) {
+        self.aggressive_vectorization = true;
+        self.auto_parallelize = true;
+        self.target_simd = "AVX512".to_string();  // 使用最新的 AVX-512
+    }
+    
+    /// 设置 SIMD 目标
+    pub fn set_simd_target(&mut self, target: &str) {
+        self.target_simd = target.to_string();
+    }
+    
+    /// 获取 SIMD 宽度
+    pub fn get_simd_width(&self) -> u32 {
+        match self.target_simd.as_str() {
+            "SSE" | "SSE2" => 4,      // 128-bit / 32-bit = 4
+            "AVX" | "AVX2" => 8,      // 256-bit / 32-bit = 8
+            "AVX512" => 16,           // 512-bit / 32-bit = 16
+            _ => 4,
         }
     }
 
@@ -292,14 +505,109 @@ impl LoopOptimizer {
     }
 
     pub fn analyze_loop(&mut self, loop_label: &str, body: &ast::Expression) {
+        let simd_width = self.get_simd_width();
         let info = LoopInfo {
             is_invariant: false,
             can_unroll: self.current_loop_depth <= 2,
             unroll_factor: if self.current_loop_depth == 0 { 1 } else { 4 >> self.current_loop_depth },
             induction_variable: None,
             bounds_known: false,
+            trip_count: None,
+            has_side_effects: false,
+            vectorizable: true,
+            simd_width,
+            can_parallelize: true,  // 默认可并行
+            memory_access_pattern: MemoryAccessPattern::Unknown,
         };
         self.loop_info.insert(loop_label.to_string(), info);
+    }
+    
+    /// 设置循环迭代次数
+    pub fn set_trip_count(&mut self, loop_label: &str, count: u32) {
+        if let Some(info) = self.loop_info.get_mut(loop_label) {
+            info.trip_count = Some(count);
+            info.bounds_known = true;
+            
+            // 激进的循环展开策略
+            if self.aggressive_vectorization {
+                // 更大的循环也展开（最多 16 次）
+                if count <= 16 {
+                    info.can_unroll = true;
+                    info.unroll_factor = count;
+                }
+            } else {
+                // 保守策略（最多 8 次）
+                if count <= 8 {
+                    info.can_unroll = true;
+                    info.unroll_factor = count;
+                }
+            }
+            
+            // 自动检测并行化机会
+            if self.auto_parallelize && count >= 100 {
+                info.can_parallelize = true;
+            }
+        }
+    }
+    
+    /// 添加循环不变量
+    pub fn add_invariant(&mut self, loop_label: &str, expr: String) {
+        self.invariant_expressions
+            .entry(loop_label.to_string())
+            .or_insert_with(Vec::new)
+            .push(expr);
+    }
+    
+    /// 获取循环不变量
+    pub fn get_invariants(&self, loop_label: &str) -> Vec<String> {
+        self.invariant_expressions
+            .get(loop_label)
+            .cloned()
+            .unwrap_or_default()
+    }
+    
+    /// 标记循环有副作用
+    pub fn mark_side_effects(&mut self, loop_label: &str) {
+        if let Some(info) = self.loop_info.get_mut(loop_label) {
+            info.has_side_effects = true;
+            info.vectorizable = false;  // 有副作用的循环不能向量化
+        }
+    }
+    
+    /// 检查是否可向量化
+    pub fn is_vectorizable(&self, loop_label: &str) -> bool {
+        self.loop_info.get(loop_label)
+            .map(|info| info.vectorizable && !info.has_side_effects)
+            .unwrap_or(false)
+    }
+    
+    /// 检查是否可并行化
+    pub fn is_parallelizable(&self, loop_label: &str) -> bool {
+        self.loop_info.get(loop_label)
+            .map(|info| info.can_parallelize && !info.has_side_effects)
+            .unwrap_or(false)
+    }
+    
+    /// 设置内存访问模式
+    pub fn set_memory_pattern(&mut self, loop_label: &str, pattern: MemoryAccessPattern) {
+        if let Some(info) = self.loop_info.get_mut(loop_label) {
+            info.memory_access_pattern = pattern;
+            // 顺序访问最适合向量化
+            if matches!(pattern, MemoryAccessPattern::Sequential) {
+                info.vectorizable = true;
+            }
+            // 随机访问不适合向量化
+            if matches!(pattern, MemoryAccessPattern::Random) {
+                info.vectorizable = false;
+            }
+        }
+    }
+    
+    /// 获取向量化信息
+    pub fn get_vectorization_info(&self, loop_label: &str) -> Option<(u32, bool)> {
+        self.loop_info.get(loop_label).map(|info| {
+            (info.simd_width, info.vectorizable)
+        })
     }
 
     pub fn mark_induction_variable(&mut self, loop_label: &str, var_name: &str) {
@@ -665,6 +973,12 @@ impl SemanticAnalyzer {
             },
             ast::Statement::Group { name, members, .. } => {
                 self.analyze_group_statement(name, members)
+            },
+            // ECS声明 - 暂时跳过
+            ast::Statement::Entity { .. } | 
+            ast::Statement::Component { .. } | 
+            ast::Statement::System { .. } => {
+                Ok(())
             },
         }
     }

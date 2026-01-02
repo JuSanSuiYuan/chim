@@ -9,6 +9,8 @@ pub struct StructLayout {
     pub field_offsets: Vec<usize>,
     pub original_order: Vec<String>,
     pub optimized_order: Vec<String>,
+    pub padding_bytes: usize,  // 填充字节数
+    pub cache_aligned: bool,   // 是否缓存对齐
 }
 
 /// 内存布局分析器
@@ -17,15 +19,35 @@ pub struct StructLayout {
 /// - 字段重排（按对齐要求从大到小排序）
 /// - 填充消除（减少内存浪费）
 /// - SIMD对齐（为向量化做准备）
+/// - 缓存行对齐（提高缓存效率）
 pub struct MemoryLayoutAnalyzer {
     layouts: HashMap<String, StructLayout>,
+    value_types: HashMap<String, bool>,  // 标记值类型
+    simd_alignment: usize,  // SIMD对齐要求
 }
 
 impl MemoryLayoutAnalyzer {
     pub fn new() -> Self {
         Self {
             layouts: HashMap::new(),
+            value_types: HashMap::new(),
+            simd_alignment: 16,  // 默认16字节对齐（SSE）
         }
+    }
+    
+    /// 设置SIMD对齐要求
+    pub fn set_simd_alignment(&mut self, align: usize) {
+        self.simd_alignment = align;
+    }
+    
+    /// 标记为值类型
+    pub fn mark_value_type(&mut self, name: &str) {
+        self.value_types.insert(name.to_string(), true);
+    }
+    
+    /// 检查是否是值类型
+    pub fn is_value_type(&self, name: &str) -> bool {
+        self.value_types.get(name).copied().unwrap_or(false)
     }
     
     /// 分析并优化结构体布局
@@ -58,12 +80,20 @@ impl MemoryLayoutAnalyzer {
         // 4. 结构体总大小需要对齐到最大对齐要求
         let total_size = align_up(offset, max_align);
         
+        // 5. 计算填充字节
+        let padding_bytes = total_size - offset;
+        
+        // 6. 检查是否需要缓存行对齐（64字节）
+        let cache_aligned = total_size >= 64 || self.is_value_type(name);
+        
         let layout = StructLayout {
             size: total_size,
             alignment: max_align,
             field_offsets: offsets,
             original_order: fields.iter().map(|f| f.name.clone()).collect(),
             optimized_order: field_info.iter().map(|f| f.0.clone()).collect(),
+            padding_bytes,
+            cache_aligned,
         };
         
         self.layouts.insert(name.to_string(), layout.clone());
@@ -73,14 +103,26 @@ impl MemoryLayoutAnalyzer {
     /// 获取类型的大小和对齐
     fn get_type_info(&self, ty: &str) -> (usize, usize) {
         match ty {
-            "int" => (4, 4),
-            "float" => (4, 4),
+            "int" | "i32" => (4, 4),
+            "i64" => (8, 8),
+            "float" | "f32" => (4, 4),
+            "f64" => (8, 8),
             "bool" => (1, 1),
             "string" => (16, 8), // 假设是指针+长度
+            "char" => (1, 1),
+            "i8" => (1, 1),
+            "i16" => (2, 2),
+            "u8" => (1, 1),
+            "u16" => (2, 2),
+            "u32" => (4, 4),
+            "u64" => (8, 8),
             _ => {
                 // 查找已定义的结构体
                 if let Some(layout) = self.layouts.get(ty) {
                     (layout.size, layout.alignment)
+                } else if ty.starts_with("[") {
+                    // 数组类型
+                    (16, 8)  // 假设是动态数组
                 } else {
                     // 默认指针大小
                     (8, 8)
@@ -111,6 +153,40 @@ impl MemoryLayoutAnalyzer {
     /// 获取已分析的布局
     pub fn get_layout(&self, name: &str) -> Option<&StructLayout> {
         self.layouts.get(name)
+    }
+    
+    /// 应用SIMD对齐优化
+    pub fn apply_simd_alignment(&mut self, name: &str) {
+        if let Some(layout) = self.layouts.get_mut(name) {
+            if layout.size < self.simd_alignment {
+                layout.size = self.simd_alignment;
+                layout.alignment = self.simd_alignment;
+            }
+        }
+    }
+    
+    /// 获取优化报告
+    pub fn get_optimization_report(&self, name: &str) -> Option<String> {
+        if let Some(layout) = self.layouts.get(name) {
+            let report = format!(
+                "结构体 '{}' 内存布局优化:\n  \
+                大小: {} 字节\n  \
+                对齐: {} 字节\n  \
+                填充: {} 字节\n  \
+                缓存对齐: {}\n  \
+                字段顺序优化: {} -> {}",
+                name,
+                layout.size,
+                layout.alignment,
+                layout.padding_bytes,
+                if layout.cache_aligned { "是" } else { "否" },
+                layout.original_order.join(", "),
+                layout.optimized_order.join(", ")
+            );
+            Some(report)
+        } else {
+            None
+        }
     }
 }
 

@@ -1,0 +1,108 @@
+// 测试内联优化、循环优化、借用检查器的零成本抽象、值类型系统优化、组生命周期的栈内存优化
+
+// 测试1：内联优化 - 小函数应该被内联
+fn add(a: int, b: int) -> int {
+    return a + b;
+}
+
+fn multiply(x: int, y: int) -> int {
+    return x * y;
+}
+
+// 测试2：循环优化 - 循环展开和向量化
+fn sum_array(arr: [int; 100]) -> int {
+    let mut sum = 0;
+    for i in 0..100 {
+        sum = sum + arr[i];  // 可以向量化
+    }
+    return sum;
+}
+
+// 测试3：循环不变量提取
+fn loop_invariant_test(n: int) -> int {
+    let mut result = 0;
+    let constant = 42;  // 循环不变量
+    for i in 0..n {
+        result = result + constant * 2;  // constant * 2 应该被提取到循环外
+    }
+    return result;
+}
+
+// 测试4：零成本抽象 - 不可变引用应该被优化
+fn immutable_ref_test(x: &int) -> int {
+    let y = *x;  // 不可变引用，应该优化为直接访问
+    return y + 10;
+}
+
+// 测试5：值类型系统优化 - 小结构体应该栈分配
+struct Point {
+    x: int,
+    y: int,
+}
+
+fn create_point() -> Point {
+    let p = Point { x: 10, y: 20 };  // 应该在栈上分配
+    return p;
+}
+
+// 测试6：逃逸分析 - 不逃逸的变量应该栈分配
+fn stack_allocation_test() -> int {
+    let a = 100;  // 不逃逸，应该在栈上
+    let b = 200;  // 不逃逸，应该在栈上
+    return a + b;
+}
+
+// 测试7：组生命周期优化
+group Vec2 {
+    x: float,
+    y: float,
+}
+
+fn vector_add(v1: Vec2, v2: Vec2) -> Vec2 {
+    return Vec2 {
+        x: v1.x + v2.x,
+        y: v1.y + v2.y,
+    };
+}
+
+// 测试8：热点函数内联（假设这是一个热点函数）
+fn hot_function(n: int) -> int {
+    return n * n;
+}
+
+// 主测试函数
+fn main() {
+    // 测试内联优化
+    let result1 = add(5, 3);
+    let result2 = multiply(4, 6);
+    
+    // 测试循环优化
+    let mut arr: [int; 100];
+    for i in 0..100 {
+        arr[i] = i;
+    }
+    let sum = sum_array(arr);
+    
+    // 测试零成本抽象
+    let x = 42;
+    let ref_result = immutable_ref_test(&x);
+    
+    // 测试值类型优化
+    let point = create_point();
+    
+    // 测试栈分配
+    let stack_result = stack_allocation_test();
+    
+    // 测试组生命周期
+    let v1 = Vec2 { x: 1.0, y: 2.0 };
+    let v2 = Vec2 { x: 3.0, y: 4.0 };
+    let v3 = vector_add(v1, v2);
+    
+    // 测试热点函数
+    let mut total = 0;
+    for i in 0..1000 {
+        total = total + hot_function(i);
+    }
+    
+    print("优化测试完成");
+}

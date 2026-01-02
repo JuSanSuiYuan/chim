@@ -12,3 +12,4 @@ pub mod allocation;
 pub mod rvo;
 pub mod backend;
 pub mod backends;
+pub mod ecs;

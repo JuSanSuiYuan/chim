@@ -1,0 +1,41 @@
+; Chim generated Cranelift IR
+
+function u0:add(v0: i32, v1: i32) -> i32 {
+block0:
+    v.tmp1 = iadd va, vb
+    return v.tmp1 ; RVO
+}
+
+function u0:subtract(v0: i32, v1: i32) -> i32 {
+block0:
+    v.tmp2 = isub va, vb
+    return v.tmp2 ; RVO
+}
+
+function u0:multiply(v0: i32, v1: i32) -> i32 {
+block0:
+    v.tmp3 = imul va, vb
+    return v.tmp3 ; RVO
+}
+
+function u0:divide(v0: i32, v1: i32) -> i32 {
+block0:
+    v.tmp4 = sdiv va, vb
+    return v.tmp4 ; RVO
+}
+
+function u0:modulo(v0: i32, v1: i32) -> i32 {
+block0:
+    ; Mod { dest: ".tmp5", left: "a", right: "b" }
+    return v.tmp5 ; RVO
+}
+
+function u0:main() {
+block0:
+    v.tmp8 = call u0:add(v10, v20)
+    v.tmp11 = call u0:subtract(v30, v15)
+    v.tmp14 = call u0:multiply(v5, v6)
+    v.tmp17 = call u0:divide(v100, v10)
+    v.tmp20 = call u0:modulo(v17, v5)
+}
+
