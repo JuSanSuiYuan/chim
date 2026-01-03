@@ -70,11 +70,19 @@ pub enum Token {
     #[token("query")] Query,
     #[token("with")] With,
     
+    // Actor模型关键字（可选特性）
+    #[token("actor")] Actor,
+    #[token("behavior")] Behavior,
+    #[token("receive")] Receive,
+    #[token("send")] Send,
+    #[token("spawn")] Spawn,
+    #[token("mailbox")] Mailbox,
+    
     // 中文关键字
     #[token("令")] LetZh,
     #[token("设")] VarZh,
     #[token("如果")] IfZh,
-    #[token("则若")] ElifZh,
+    #[token("既若")] ElifZh,
     #[token("否则")] ElseZh,
     #[token("匹配")] MatchZh,
     #[token("当")] WhileZh,

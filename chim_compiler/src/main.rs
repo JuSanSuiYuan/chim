@@ -18,6 +18,8 @@ mod allocation;
 mod rvo;
 mod backend;
 mod backends;
+mod ecs;
+mod actor;
 
 use codegen::CodeGenerator;
 use wasm_codegen::TargetCodeGenerator;
@@ -37,13 +39,23 @@ fn main() {
         eprintln!("最新添加 (1): chibicc");
         eprintln!("\nGPU后端 (6): cuda, vulkan, metal, opencl, mojo, tilelang");
         eprintln!("  ★ TileLang: 国产AI编程语言（北大杨智团队，DeepSeek v3.2内核）");
-        eprintln!("  ★ 支持CUDA和国产算力芯片（昇腾、寒武纪等）");
+        eprintln!("  ★ 支持CUDA和国产算力芋片（昇腾、寒武纪等）");
+        eprintln!("\n现代语言后端 (19): moonbit, cone, pony, fsharp, gleam, go, python, crystal, reason, julia, r, ruby, d, delphi, cpp, erlang, matlab, php, june");
+        eprintln!("  ★ MoonBit: 国产现代语言，高性能、高安全");
+        eprintln!("  ★ C++: 系统级高性能编程");
+        eprintln!("  ★ Erlang: 分布式并发系统");
+        eprintln!("  ★ Go, Python, Ruby: 主流应用开发");
+        eprintln!("  ★ Julia, R, MATLAB: 科学计算与数据分析");
+        eprintln!("  ★ F#, Reason: 函数式编程");
+        eprintln!("  ★ PHP: Web后端开发");
+        eprintln!("  ★ June: 现代系统编程");
         eprintln!("\n  Optimization levels: 0 (none), 1 (basic), 2 (aggressive)");
         eprintln!("\nExamples:");
         eprintln!("  {} test.chim -t tilelang -O 2  # 🇨🇳 国产TileLang（推荐）", args[0]);
-        eprintln!("  {} test.chim -t cuda -O 2      # NVIDIA GPU", args[0]);
-        eprintln!("  {} test.chim -t vulkan -O 2    # 跨平台GPU", args[0]);
-        eprintln!("  {} test.chim -t mojo -O 2      # AI原生", args[0]);
+        eprintln!("  {} test.chim -t moonbit -O 2   # 🇨🇳 国产MoonBit（推荐）", args[0]);
+        eprintln!("  {} test.chim -t python -O 2    # Python应用", args[0]);
+        eprintln!("  {} test.chim -t go -O 2        # Go应用", args[0]);
+        eprintln!("  {} test.chim -t julia -O 2     # 科学计算", args[0]);
         process::exit(1);
     }
 

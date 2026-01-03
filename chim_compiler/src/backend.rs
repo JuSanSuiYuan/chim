@@ -60,6 +60,27 @@ pub enum BackendType {
     OpenCL,    // OpenCL (跨平台)
     Mojo,      // Mojo (AI原生)
     TileLang,  // Chim TileLang (AI/ML优化)
+    
+    // 现代语言后端
+    MoonBit,   // MoonBit
+    Cone,      // Cone
+    Pony,      // Pony
+    FSharp,    // F#
+    Gleam,     // Gleam
+    Go,        // Go
+    Python,    // Python
+    Crystal,   // Crystal
+    Reason,    // Reason/ReScript
+    Julia,     // Julia
+    R,         // R
+    Ruby,      // Ruby
+    D,         // D
+    Delphi,    // Delphi/Pascal
+    Cpp,       // C++
+    Erlang,    // Erlang
+    Matlab,    // MATLAB
+    Php,       // PHP
+    June,      // June
 }
 
 impl BackendType {
@@ -104,6 +125,27 @@ impl BackendType {
             "opencl" | "cl" => Some(Self::OpenCL),
             "mojo" => Some(Self::Mojo),
             "tilelang" | "tile" | "国产" | "北大" | "deepseek" => Some(Self::TileLang),
+            
+            // 现代语言后端
+            "moonbit" | "mbt" => Some(Self::MoonBit),
+            "cone" => Some(Self::Cone),
+            "pony" => Some(Self::Pony),
+            "fsharp" | "f#" | "fs" => Some(Self::FSharp),
+            "gleam" => Some(Self::Gleam),
+            "go" | "golang" => Some(Self::Go),
+            "python" | "py" => Some(Self::Python),
+            "crystal" | "cr" => Some(Self::Crystal),
+            "reason" | "reasonml" | "re" => Some(Self::Reason),
+            "julia" | "jl" => Some(Self::Julia),
+            "r" | "rlang" => Some(Self::R),
+            "ruby" | "rb" => Some(Self::Ruby),
+            "d" | "dlang" => Some(Self::D),
+            "delphi" | "pascal" | "pas" => Some(Self::Delphi),
+            "cpp" | "c++" | "cxx" => Some(Self::Cpp),
+            "erlang" | "erl" => Some(Self::Erlang),
+            "matlab" | "mat" | "m" => Some(Self::Matlab),
+            "php" => Some(Self::Php),
+            "june" => Some(Self::June),
             
             _ => None,
         }
@@ -150,6 +192,27 @@ impl BackendType {
             Self::OpenCL,
             Self::Mojo,
             Self::TileLang,
+            
+            // 现代语言后端
+            Self::MoonBit,
+            Self::Cone,
+            Self::Pony,
+            Self::FSharp,
+            Self::Gleam,
+            Self::Go,
+            Self::Python,
+            Self::Crystal,
+            Self::Reason,
+            Self::Julia,
+            Self::R,
+            Self::Ruby,
+            Self::D,
+            Self::Delphi,
+            Self::Cpp,
+            Self::Erlang,
+            Self::Matlab,
+            Self::Php,
+            Self::June,
         ]
     }
 }
@@ -196,5 +259,26 @@ pub fn create_backend(backend_type: BackendType) -> Box<dyn CodegenBackend> {
         BackendType::OpenCL => Box::new(crate::backends::opencl::OpenCLBackend::new()),
         BackendType::Mojo => Box::new(crate::backends::mojo::MojoBackend::new()),
         BackendType::TileLang => Box::new(crate::backends::tilelang::TileLangBackend::new()),
+        
+        // 现代语言后端
+        BackendType::MoonBit => Box::new(crate::backends::moonbit::MoonBitBackend::new()),
+        BackendType::Cone => Box::new(crate::backends::cone::ConeBackend::new()),
+        BackendType::Pony => Box::new(crate::backends::pony::PonyBackend::new()),
+        BackendType::FSharp => Box::new(crate::backends::fsharp::FSharpBackend::new()),
+        BackendType::Gleam => Box::new(crate::backends::gleam::GleamBackend::new()),
+        BackendType::Go => Box::new(crate::backends::go::GoBackend::new()),
+        BackendType::Python => Box::new(crate::backends::python::PythonBackend::new()),
+        BackendType::Crystal => Box::new(crate::backends::crystal::CrystalBackend::new()),
+        BackendType::Reason => Box::new(crate::backends::reason::ReasonBackend::new()),
+        BackendType::Julia => Box::new(crate::backends::julia::JuliaBackend::new()),
+        BackendType::R => Box::new(crate::backends::r::RBackend::new()),
+        BackendType::Ruby => Box::new(crate::backends::ruby::RubyBackend::new()),
+        BackendType::D => Box::new(crate::backends::d::DBackend::new()),
+        BackendType::Delphi => Box::new(crate::backends::delphi::DelphiBackend::new()),
+        BackendType::Cpp => Box::new(crate::backends::cpp::CppBackend::new()),
+        BackendType::Erlang => Box::new(crate::backends::erlang::ErlangBackend::new()),
+        BackendType::Matlab => Box::new(crate::backends::matlab::MatlabBackend::new()),
+        BackendType::Php => Box::new(crate::backends::php::PhpBackend::new()),
+        BackendType::June => Box::new(crate::backends::june::JuneBackend::new()),
     }
 }

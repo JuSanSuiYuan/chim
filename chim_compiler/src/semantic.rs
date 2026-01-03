@@ -6,6 +6,362 @@ use crate::memory_layout::MemoryLayoutAnalyzer;
 use crate::group_manager::GroupManager;
 use crate::allocation::AllocationDecider;
 
+// ==================== 类型系统增强 ====================
+
+/// 高级类型表示
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Type {
+    Int,
+    Float,
+    Bool,
+    String,
+    Unit,
+    /// 类型变量（用于推断）
+    Var(String),
+    /// 函数类型
+    Function(Vec<Type>, Box<Type>),
+    /// 引用类型
+    Ref(Box<Type>, Option<Lifetime>),
+    /// 可变引用
+    MutRef(Box<Type>, Option<Lifetime>),
+    /// 结构体
+    Struct(String, Vec<Type>),
+    /// 泛型类型
+    Generic(String, Vec<Type>),
+    /// 推断中
+    Unknown,
+}
+
+impl fmt::Display for Type {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Type::Int => write!(f, "int"),
+            Type::Float => write!(f, "float"),
+            Type::Bool => write!(f, "bool"),
+            Type::String => write!(f, "string"),
+            Type::Unit => write!(f, "()"),
+            Type::Var(v) => write!(f, "'{}", v),
+            Type::Function(params, ret) => {
+                write!(f, "fn(")?;
+                for (i, p) in params.iter().enumerate() {
+                    if i > 0 { write!(f, ", ")?; }
+                    write!(f, "{}", p)?;
+                }
+                write!(f, ") -> {}", ret)
+            }
+            Type::Ref(t, lt) => {
+                write!(f, "&")?;
+                if let Some(l) = lt {
+                    write!(f, "{} ", l)?;
+                }
+                write!(f, "{}", t)
+            }
+            Type::MutRef(t, lt) => {
+                write!(f, "&mut ")?;
+                if let Some(l) = lt {
+                    write!(f, "{} ", l)?;
+                }
+                write!(f, "{}", t)
+            }
+            Type::Struct(name, args) => {
+                write!(f, "{}", name)?;
+                if !args.is_empty() {
+                    write!(f, "<")?;
+                    for (i, arg) in args.iter().enumerate() {
+                        if i > 0 { write!(f, ", ")?; }
+                        write!(f, "{}", arg)?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+            Type::Generic(name, args) => {
+                write!(f, "{}", name)?;
+                if !args.is_empty() {
+                    write!(f, "<")?;
+                    for (i, arg) in args.iter().enumerate() {
+                        if i > 0 { write!(f, ", ")?; }
+                        write!(f, "{}", arg)?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+            Type::Unknown => write!(f, "?"),
+        }
+    }
+}
+
+/// 类型约束
+#[derive(Debug, Clone)]
+pub struct TypeConstraint {
+    pub left: Type,
+    pub right: Type,
+    pub reason: String,
+}
+
+/// 类型推断器
+pub struct TypeInferencer {
+    /// 类型变量映射
+    type_vars: HashMap<String, Type>,
+    /// 类型约束
+    constraints: Vec<TypeConstraint>,
+    /// 统一化缓存
+    unification_cache: HashMap<(Type, Type), Option<Type>>,
+    /// 变量类型环境
+    env: HashMap<String, Type>,
+    /// 下一个类型变量ID
+    next_type_var: usize,
+}
+
+impl TypeInferencer {
+    pub fn new() -> Self {
+        Self {
+            type_vars: HashMap::new(),
+            constraints: Vec::new(),
+            unification_cache: HashMap::new(),
+            env: HashMap::new(),
+            next_type_var: 0,
+        }
+    }
+    
+    /// 生成新的类型变量
+    pub fn fresh_type_var(&mut self) -> Type {
+        let id = self.next_type_var;
+        self.next_type_var += 1;
+        Type::Var(format!("T{}", id))
+    }
+    
+    /// 推断表达式类型
+    pub fn infer_expr(&mut self, expr: &ast::Expression) -> Result<Type, SemanticError> {
+        match expr {
+            ast::Expression::Literal(lit) => Ok(self.infer_literal(lit)),
+            ast::Expression::Identifier(name) => self.lookup_type(name),
+            ast::Expression::BinaryOp { left, op, right } => {
+                self.infer_binary_op(left, op, right)
+            }
+            ast::Expression::Call { callee, args } => {
+                self.infer_call(callee, args)
+            }
+            ast::Expression::Lambda { params, body, .. } => {
+                self.infer_lambda(params, body)
+            }
+            _ => Ok(Type::Unknown),
+        }
+    }
+    
+    /// 推断字面量类型
+    fn infer_literal(&self, lit: &Literal) -> Type {
+        match lit {
+            Literal::Integer(_) => Type::Int,
+            Literal::Float(_) => Type::Float,
+            Literal::Boolean(_) => Type::Bool,
+            Literal::String(_) => Type::String,
+            _ => Type::Unknown,
+        }
+    }
+    
+    /// 查找变量类型
+    fn lookup_type(&self, name: &str) -> Result<Type, SemanticError> {
+        self.env.get(name)
+            .cloned()
+            .ok_or_else(|| SemanticError::UndefinedIdentifier(name.to_string()))
+    }
+    
+    /// 推断二元运算类型
+    fn infer_binary_op(
+        &mut self,
+        left: &ast::Expression,
+        op: &ast::BinaryOperator,
+        right: &ast::Expression,
+    ) -> Result<Type, SemanticError> {
+        let left_ty = self.infer_expr(left)?;
+        let right_ty = self.infer_expr(right)?;
+        
+        match op {
+            ast::BinaryOperator::Add
+            | ast::BinaryOperator::Sub
+            | ast::BinaryOperator::Mul
+            | ast::BinaryOperator::Div => {
+                // 算术运算：两边类型需一致，结果类型相同
+                let unified = self.unify(&left_ty, &right_ty)?;
+                Ok(unified)
+            }
+            ast::BinaryOperator::Eq
+            | ast::BinaryOperator::Ne
+            | ast::BinaryOperator::Lt
+            | ast::BinaryOperator::Le
+            | ast::BinaryOperator::Gt
+            | ast::BinaryOperator::Ge => {
+                // 比较运算：两边类型需一致，返回 bool
+                self.unify(&left_ty, &right_ty)?;
+                Ok(Type::Bool)
+            }
+            ast::BinaryOperator::And | ast::BinaryOperator::Or => {
+                // 逻辑运算：两边必须是 bool
+                self.unify(&left_ty, &Type::Bool)?;
+                self.unify(&right_ty, &Type::Bool)?;
+                Ok(Type::Bool)
+            }
+            _ => Ok(Type::Unknown),
+        }
+    }
+    
+    /// 推断函数调用类型
+    fn infer_call(
+        &mut self,
+        func: &ast::Expression,
+        args: &[ast::Expression],
+    ) -> Result<Type, SemanticError> {
+        let func_ty = self.infer_expr(func)?;
+        
+        // 推断参数类型
+        let mut arg_types = Vec::new();
+        for arg in args {
+            arg_types.push(self.infer_expr(arg)?);
+        }
+        
+        // 如果函数类型未知，创建函数类型变量
+        let return_ty = self.fresh_type_var();
+        let expected_func_ty = Type::Function(arg_types.clone(), Box::new(return_ty.clone()));
+        
+        // 统一函数类型
+        self.unify(&func_ty, &expected_func_ty)?;
+        
+        Ok(return_ty)
+    }
+    
+    /// 推断 lambda 类型
+    fn infer_lambda(
+        &mut self,
+        params: &[ast::Parameter],
+        body: &ast::Expression,
+    ) -> Result<Type, SemanticError> {
+        // 为参数生成类型变量
+        let mut param_types = Vec::new();
+        for param in params {
+            let ty = if let Some(ty_str) = &param.ty {
+                self.parse_type_string(ty_str)
+            } else {
+                self.fresh_type_var()
+            };
+            param_types.push(ty.clone());
+            self.env.insert(param.name.clone(), ty);
+        }
+        
+        // 推断函数体类型
+        let body_ty = self.infer_expr(body)?;
+        
+        Ok(Type::Function(param_types, Box::new(body_ty)))
+    }
+    
+    /// 解析类型字符串
+    fn parse_type_string(&self, s: &str) -> Type {
+        match s {
+            "int" => Type::Int,
+            "float" => Type::Float,
+            "bool" => Type::Bool,
+            "string" => Type::String,
+            _ => Type::Unknown,
+        }
+    }
+    
+    /// 统一化两个类型
+    pub fn unify(&mut self, t1: &Type, t2: &Type) -> Result<Type, SemanticError> {
+        // 使用缓存加速
+        if let Some(cached) = self.unification_cache.get(&(t1.clone(), t2.clone())) {
+            return cached.clone().ok_or_else(|| SemanticError::TypeMismatch {
+                expected: format!("{}", t1),
+                found: format!("{}", t2),
+            });
+        }
+        
+        let result = match (t1, t2) {
+            // 相同类型直接返回
+            (a, b) if a == b => Ok(a.clone()),
+            
+            // 类型变量统一
+            (Type::Var(v), t) | (t, Type::Var(v)) => {
+                self.bind_type_var(v, t.clone());
+                Ok(t.clone())
+            }
+            
+            // 函数类型统一
+            (Type::Function(p1, r1), Type::Function(p2, r2)) => {
+                if p1.len() != p2.len() {
+                    return Err(SemanticError::TypeMismatch {
+                        expected: format!("{}", t1),
+                        found: format!("{}", t2),
+                    });
+                }
+                
+                // 统一参数类型
+                let mut unified_params = Vec::new();
+                for (pa, pb) in p1.iter().zip(p2.iter()) {
+                    unified_params.push(self.unify(pa, pb)?);
+                }
+                
+                // 统一返回类型
+                let unified_return = self.unify(r1, r2)?;
+                
+                Ok(Type::Function(unified_params, Box::new(unified_return)))
+            }
+            
+            // 引用类型统一
+            (Type::Ref(t1, _l1), Type::Ref(t2, _l2)) => {
+                let unified_inner = self.unify(t1, t2)?;
+                Ok(Type::Ref(Box::new(unified_inner), None))
+            }
+            
+            // Unknown 可以匹配任何类型
+            (Type::Unknown, t) | (t, Type::Unknown) => Ok(t.clone()),
+            
+            // 其他情况为类型不匹配
+            _ => Err(SemanticError::TypeMismatch {
+                expected: format!("{}", t1),
+                found: format!("{}", t2),
+            }),
+        };
+        
+        // 缓存结果
+        self.unification_cache.insert((t1.clone(), t2.clone()), result.clone().ok());
+        result
+    }
+    
+    /// 绑定类型变量
+    fn bind_type_var(&mut self, var: &str, ty: Type) {
+        self.type_vars.insert(var.to_string(), ty);
+    }
+    
+    /// 添加类型约束
+    pub fn add_constraint(&mut self, left: Type, right: Type, reason: String) {
+        self.constraints.push(TypeConstraint { left, right, reason });
+    }
+    
+    /// 求解所有约束
+    pub fn solve_constraints(&mut self) -> Result<(), Vec<SemanticError>> {
+        let mut errors = Vec::new();
+        
+        for constraint in &self.constraints.clone() {
+            if let Err(e) = self.unify(&constraint.left, &constraint.right) {
+                errors.push(e);
+            }
+        }
+        
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl Default for TypeInferencer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Lifetime(pub String);
 
@@ -218,6 +574,278 @@ impl BorrowChecker {
 }
 
 impl Default for BorrowChecker {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+// ==================== NLL（非词法生命周期）分析器 ====================
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct BasicBlockId(pub usize);
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct BorrowId(pub usize);
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Place {
+    pub base: String,
+    pub projections: Vec<Projection>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Projection {
+    Field(String),
+    Index,
+    Deref,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Region {
+    pub start: Location,
+    pub end: Location,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Location {
+    pub block: BasicBlockId,
+    pub statement: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct BorrowInfo {
+    pub id: BorrowId,
+    pub borrowed_place: Place,
+    pub is_mutable: bool,
+    pub region: Region,
+}
+
+/// 非词法生命周期分析器
+pub struct NLLAnalyzer {
+    /// 控制流图
+    cfg: ControlFlowGraph,
+    /// 活跃借用分析
+    active_borrows: HashMap<BasicBlockId, HashSet<BorrowId>>,
+    /// 借用信息
+    borrows: Vec<BorrowInfo>,
+    /// 下一个借用ID
+    next_borrow_id: usize,
+}
+
+impl NLLAnalyzer {
+    pub fn new() -> Self {
+        Self {
+            cfg: ControlFlowGraph::new(),
+            active_borrows: HashMap::new(),
+            borrows: Vec::new(),
+            next_borrow_id: 0,
+        }
+    }
+    
+    /// 分析函数的借用
+    pub fn analyze_function(&mut self, _func: &ast::Statement) -> Result<(), LifetimeError> {
+        // 1. 构建控制流图
+        // self.build_cfg(func)?;
+        
+        // 2. 计算每个基本块的活跃借用
+        self.compute_active_borrows();
+        
+        // 3. 检查借用冲突
+        self.check_borrow_conflicts()?;
+        
+        Ok(())
+    }
+    
+    /// 计算活跃借用（数据流分析）
+    fn compute_active_borrows(&mut self) {
+        // 使用工作列表算法进行数据流分析
+        let mut worklist: Vec<BasicBlockId> = self.cfg.all_blocks().collect();
+        
+        while let Some(block_id) = worklist.pop() {
+            let old_borrows = self.active_borrows.get(&block_id).cloned()
+                .unwrap_or_default();
+            
+            // 计算新的活跃借用集合
+            let new_borrows = self.transfer_function(block_id, &old_borrows);
+            
+            // 如果发生变化，将后继块加入工作列表
+            if new_borrows != old_borrows {
+                self.active_borrows.insert(block_id, new_borrows);
+                for succ in self.cfg.successors(block_id) {
+                    if !worklist.contains(succ) {
+                        worklist.push(*succ);
+                    }
+                }
+            }
+        }
+    }
+    
+    /// 传递函数：计算基本块输出的活跃借用
+    fn transfer_function(
+        &self,
+        block: BasicBlockId,
+        input: &HashSet<BorrowId>,
+    ) -> HashSet<BorrowId> {
+        let mut output = input.clone();
+        
+        // 遍历基本块中的语句
+        for (stmt_idx, _stmt) in self.cfg.statements(block).into_iter().enumerate() {
+            let location = Location { block, statement: stmt_idx };
+            
+            // 检查是否有新借用开始
+            for borrow in &self.borrows {
+                if borrow.region.start == location {
+                    output.insert(borrow.id);
+                }
+            }
+            
+            // 检查是否有借用结束
+            output.retain(|&borrow_id| {
+                let borrow = &self.borrows[borrow_id.0];
+                borrow.region.end != location
+            });
+        }
+        
+        output
+    }
+    
+    /// 检查借用冲突
+    fn check_borrow_conflicts(&self) -> Result<(), LifetimeError> {
+        for (&_block_id, active) in &self.active_borrows {
+            // 检查同一位置的活跃借用是否冲突
+            for &borrow_id in active {
+                let borrow = &self.borrows[borrow_id.0];
+                
+                // 检查与其他活跃借用的冲突
+                for &other_id in active {
+                    if borrow_id == other_id {
+                        continue;
+                    }
+                    
+                    let other = &self.borrows[other_id.0];
+                    
+                    // 检查是否借用了相同的地方
+                    if self.places_overlap(&borrow.borrowed_place, &other.borrowed_place) {
+                        // 如果有可变借用，则冲突
+                        if borrow.is_mutable || other.is_mutable {
+                            return Err(LifetimeError::MutableBorrowConflict(
+                                format!("{:?}", borrow.borrowed_place.base),
+                                format!("{:?}", other.borrowed_place.base),
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+        
+        Ok(())
+    }
+    
+    /// 检查两个 place 是否重叠
+    fn places_overlap(&self, p1: &Place, p2: &Place) -> bool {
+        // 如果 base 不同，不重叠
+        if p1.base != p2.base {
+            return false;
+        }
+        
+        // 检查投影是否重叠
+        // 简化实现：如果 base 相同，认为重叠
+        true
+    }
+    
+    /// 添加借用
+    pub fn add_borrow(
+        &mut self,
+        place: Place,
+        is_mutable: bool,
+        start: Location,
+        end: Location,
+    ) -> BorrowId {
+        let id = BorrowId(self.next_borrow_id);
+        self.next_borrow_id += 1;
+        
+        self.borrows.push(BorrowInfo {
+            id,
+            borrowed_place: place,
+            is_mutable,
+            region: Region { start, end },
+        });
+        
+        id
+    }
+}
+
+impl Default for NLLAnalyzer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 控制流图
+pub struct ControlFlowGraph {
+    blocks: HashMap<BasicBlockId, BasicBlock>,
+    edges: HashMap<BasicBlockId, Vec<BasicBlockId>>,
+}
+
+#[derive(Debug, Clone)]
+pub struct BasicBlock {
+    pub id: BasicBlockId,
+    pub statements: Vec<CFGStatement>,
+}
+
+#[derive(Debug, Clone)]
+pub enum CFGStatement {
+    Assign(Place, Rvalue),
+    StorageLive(Place),
+    StorageDead(Place),
+}
+
+#[derive(Debug, Clone)]
+pub enum Rvalue {
+    Use(Operand),
+    Ref(bool, Place),  // (is_mutable, place)
+    BinaryOp(String, Operand, Operand),
+}
+
+#[derive(Debug, Clone)]
+pub enum Operand {
+    Copy(Place),
+    Move(Place),
+    Constant(i64),
+}
+
+impl ControlFlowGraph {
+    pub fn new() -> Self {
+        Self {
+            blocks: HashMap::new(),
+            edges: HashMap::new(),
+        }
+    }
+    
+    pub fn all_blocks(&self) -> impl Iterator<Item = BasicBlockId> + '_ {
+        self.blocks.keys().copied()
+    }
+    
+    pub fn successors(&self, block: BasicBlockId) -> &[BasicBlockId] {
+        self.edges.get(&block).map(|v| v.as_slice()).unwrap_or(&[])
+    }
+    
+    pub fn statements(&self, block: BasicBlockId) -> &[CFGStatement] {
+        self.blocks.get(&block)
+            .map(|b| b.statements.as_slice())
+            .unwrap_or(&[])
+    }
+    
+    pub fn add_block(&mut self, id: BasicBlockId, statements: Vec<CFGStatement>) {
+        self.blocks.insert(id, BasicBlock { id, statements });
+    }
+    
+    pub fn add_edge(&mut self, from: BasicBlockId, to: BasicBlockId) {
+        self.edges.entry(from).or_insert_with(Vec::new).push(to);
+    }
+}
+
+impl Default for ControlFlowGraph {
     fn default() -> Self {
         Self::new()
     }
@@ -907,6 +1535,10 @@ pub struct SemanticAnalyzer {
     pub loop_optimizer: LoopOptimizer,
     pub memory_layout: MemoryLayoutAnalyzer,
     pub group_manager: GroupManager,
+    /// 新增：类型推断器
+    pub type_inferencer: TypeInferencer,
+    /// 新增：NLL分析器
+    pub nll_analyzer: NLLAnalyzer,
     pub errors: Vec<SemanticError>,
     pub current_line: usize,
     pub current_column: usize,
@@ -921,6 +1553,8 @@ impl SemanticAnalyzer {
             loop_optimizer: LoopOptimizer::new(),
             memory_layout: MemoryLayoutAnalyzer::new(),
             group_manager: GroupManager::new(),
+            type_inferencer: TypeInferencer::new(),
+            nll_analyzer: NLLAnalyzer::new(),
             errors: Vec::new(),
             current_line: 1,
             current_column: 1,
@@ -978,6 +1612,10 @@ impl SemanticAnalyzer {
             ast::Statement::Entity { .. } | 
             ast::Statement::Component { .. } | 
             ast::Statement::System { .. } => {
+                Ok(())
+            },
+            ast::Statement::Actor { .. } => {
+                // Actor语句，暂时跳过语义分析
                 Ok(())
             },
         }

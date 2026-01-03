@@ -1,26 +1,32 @@
 use crate::ast::{Expression, UnaryOperator};
 use crate::semantic::EscapeAnalyzer;
 use crate::memory_layout::MemoryLayoutAnalyzer;
+// use crate::radix_pool::RadixMemoryPool;  // 暂时注释掉，未使用
 
-/// 分配策略
+/// 分配策略（增强版：支持基数树内存池）
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AllocationStrategy {
     Stack,
     Heap,
+    RadixPool,  // 新增：使用分层基数树内存池
 }
 
-/// 栈/堆分配决策器
+/// 栈/堆/池分配决策器（增强版）
 /// 
-/// 根据以下规则决定变量应该分配在栈还是堆：
-/// 1. 如果变量逃逸出当前作用域，分配在堆
-/// 2. 大型结构体（超过阈值）分配在堆
-/// 3. 取地址操作可能需要堆分配
-/// 4. 默认优先栈分配（性能更好）
+/// 根据以下规则决定变量应该分配在栈、堆还是内存池：
+/// 1. 生命周期 < 100指令 -> 栈分配（超激进优化）
+/// 2. 100-1000指令 && size <= 4KB -> 基数树内存池（新增！）
+/// 3. 逃逸或 size > 4KB -> 堆分配
+/// 4. 默认优先栈分配（性能最好）
 pub struct AllocationDecider {
     escape_analyzer: EscapeAnalyzer,
     memory_layout: MemoryLayoutAnalyzer,
     /// 栈分配的大小阈值（字节）
     stack_threshold: usize,
+    /// 内存池分配的大小阈值（字节）
+    pool_threshold: usize,
+    /// 内存池分配的生命周期阈值（指令数）
+    pool_lifetime_threshold: usize,
 }
 
 impl AllocationDecider {
@@ -28,7 +34,9 @@ impl AllocationDecider {
         Self {
             escape_analyzer,
             memory_layout,
-            stack_threshold: 1024, // 默认1KB阈值
+            stack_threshold: 4096,  // 提高到4KB（Rust仅1KB）
+            pool_threshold: 4096,   // 内存池支持到4KB
+            pool_lifetime_threshold: 1000,  // 中等生命周期
         }
     }
     
@@ -37,24 +45,54 @@ impl AllocationDecider {
         self.stack_threshold = threshold;
     }
     
-    /// 决定变量应该分配在栈还是堆
-    pub fn decide(&self, name: &str, ty: &str, initializer: &Expression, context: &str) -> AllocationStrategy {
-        // 规则1：如果变量逃逸，分配在堆
+    /// 设置内存池阈值
+    pub fn set_pool_threshold(&mut self, threshold: usize) {
+        self.pool_threshold = threshold;
+    }
+    
+    /// 决定变量应该分配在栈、堆还是内存池（增强版）
+    pub fn decide_with_pool(
+        &self, 
+        name: &str, 
+        ty: &str, 
+        initializer: &Expression, 
+        context: &str,
+        lifetime_instructions: usize,  // 新增：生命周期长度（指令数）
+    ) -> AllocationStrategy {
+        let size = self.get_type_size(ty);
+        
+        // 规则1：超短生命周期（<100指令）-> 栈分配
+        if lifetime_instructions < 100 {
+            return AllocationStrategy::Stack;
+        }
+        
+        // 规则2：中等生命周期（100-1000指令）且大小适中 -> 内存池
+        if lifetime_instructions >= 100 
+            && lifetime_instructions < self.pool_lifetime_threshold 
+            && size <= self.pool_threshold 
+        {
+            // 不逃逸才能用内存池
+            if !self.escape_analyzer.should_allocate_on_heap(name, context) {
+                return AllocationStrategy::RadixPool;
+            }
+        }
+        
+        // 规则3：如果变量逃逸，分配在堆
         if self.escape_analyzer.should_allocate_on_heap(name, context) {
             return AllocationStrategy::Heap;
         }
         
-        // 规则2：大型结构体（超过阈值）分配在堆
+        // 规则4：大型结构体（超过阈值）分配在堆
         if self.is_large_type(ty) {
             return AllocationStrategy::Heap;
         }
         
-        // 规则3：取地址操作需要堆分配
+        // 规则5：取地址操作需要堆分配
         if self.has_address_taken(initializer) {
             return AllocationStrategy::Heap;
         }
         
-        // 规则4：递归类型必须堆分配
+        // 规则6：递归类型必须堆分配
         if self.is_recursive_type(ty) {
             return AllocationStrategy::Heap;
         }

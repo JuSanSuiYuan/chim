@@ -23,15 +23,9 @@
 #endif
 
 [[gnu::hot]] int32_t add(int32_t a, int32_t b) {
-    auto .tmp1 = a + b;
-    return .tmp1; // RVO
-}
-
-[[gnu::hot]] int32_t multiply(int32_t x, int32_t y) {
-    auto .tmp2 = x * y;
-    return .tmp2; // RVO
 }
 
 [[gnu::used]] [[gnu::hot]] void main() {
+    auto .tmp4 = add(5, 10);
 }
 

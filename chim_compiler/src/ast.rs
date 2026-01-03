@@ -174,6 +174,12 @@ pub enum Statement {
         query: Vec<String>,  // 查询的组件类型
         body: Expression,
     },
+    // Actor声明（可选特性）
+    Actor {
+        name: String,
+        fields: Vec<StructField>,
+        behaviors: Vec<Statement>,  // Actor的方法/行为
+    },
     // 返回语句
     Return(Option<Expression>),
     // 循环语句
@@ -445,6 +451,16 @@ impl Display for Statement {
                     write!(f, "{comp}")?;
                 }
                 write!(f, ") {body}" )?
+            },
+            Statement::Actor { name, fields, behaviors } => {
+                write!(f, "actor {name} {{")?;
+                for field in fields {
+                    write!(f, "\n  {field};")?;
+                }
+                for behavior in behaviors {
+                    write!(f, "\n  {behavior}")?;
+                }
+                write!(f, "\n}}" )?
             },
         }
         Ok(())

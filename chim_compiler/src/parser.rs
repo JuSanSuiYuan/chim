@@ -61,6 +61,9 @@ impl Parser {
             Token::Group | Token::GroupZh => {
                 self.parse_group_statement()
             },
+            Token::Actor => {
+                self.parse_actor_statement()
+            },
             Token::Return | Token::ReturnZh => {
                 self.parse_return_statement()
             },
@@ -372,6 +375,62 @@ impl Parser {
         Ok(ast::Statement::Group {
             name,
             members,
+        })
+    }
+
+    fn parse_actor_statement(&mut self) -> Result<ast::Statement, ParserError> {
+        self.advance()?; // 消费 actor
+        
+        let name = match self.advance()? {
+            Token::Identifier(name) => name,
+            token => return Err(ParserError::UnexpectedToken {
+                expected: "identifier".to_string(),
+                found: format!("{:?}", token),
+            }),
+        };
+        
+        self.expect(Token::LBrace)?;
+        let mut fields = Vec::new();
+        let mut behaviors = Vec::new();
+        
+        while !self.check(Token::RBrace) {
+            // 解析字段或behavior
+            if self.check(Token::Behavior) || self.check(Token::Fn) {
+                // 解析behavior方法
+                behaviors.push(self.parse_statement()?);
+            } else {
+                // 解析字段
+                let field_name = match self.advance()? {
+                    Token::Identifier(name) => name,
+                    token => return Err(ParserError::UnexpectedToken {
+                        expected: "identifier".to_string(),
+                        found: format!("{:?}", token),
+                    }),
+                };
+                
+                self.expect(Token::Colon)?;
+                let field_type = self.parse_type()?;
+                
+                fields.push(ast::StructField {
+                    name: field_name,
+                    ty: field_type,
+                });
+                
+                if self.check(Token::Comma) {
+                    self.advance()?;
+                }
+            }
+        }
+        self.advance()?; // 消费 }
+        
+        if self.check(Token::Semicolon) {
+            self.advance()?;
+        }
+        
+        Ok(ast::Statement::Actor {
+            name,
+            fields,
+            behaviors,
         })
     }
 

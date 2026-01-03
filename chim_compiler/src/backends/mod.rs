@@ -37,3 +37,24 @@ pub mod metal;
 pub mod opencl;
 pub mod mojo;
 pub mod tilelang;
+
+// 现代语言后端
+pub mod moonbit;
+pub mod cone;
+pub mod pony;
+pub mod fsharp;
+pub mod gleam;
+pub mod go;
+pub mod python;
+pub mod crystal;
+pub mod reason;
+pub mod julia;
+pub mod r;
+pub mod ruby;
+pub mod d;
+pub mod delphi;
+pub mod cpp;
+pub mod erlang;
+pub mod matlab;
+pub mod php;
+pub mod june;
