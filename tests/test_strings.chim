@@ -1,6 +1,0 @@
-// 测试字符串字面量
-let greeting: string = "Hello, World!"
-let escaped: string = "Line1\nLine2\tTabbed"
-
-print(greeting)
-print(escaped)

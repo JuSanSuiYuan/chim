@@ -1,0 +1,8 @@
+error: failed to load manifest for workspace member `D:\PROJECT\chim\chim_compiler`
+referenced by workspace at `D:\PROJECT\chim\Cargo.toml`
+
+Caused by:
+  failed to read `D:\PROJECT\chim\chim_compiler\Cargo.toml`
+
+Caused by:
+  系统找不到指定的文件。 (os error 2)

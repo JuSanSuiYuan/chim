@@ -1,0 +1,8 @@
+[package]
+name = "chim-error"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chim-span = { path = "../chim-span" }
+thiserror = "1.0"

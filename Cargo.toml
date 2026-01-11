@@ -1,0 +1,33 @@
+[workspace]
+members = [
+    "crates/chim",
+    "crates/chim-span",
+    "crates/chim-error",
+    "crates/chim-lexer",
+    "crates/chim-parser",
+    "crates/chim-ast",
+    "crates/chim-semantic",
+    "crates/chim-ir",
+    "crates/chim-cfg",
+    "crates/chim-codegen",
+    "crates/chim-runtime",
+    "crates/chim-linker",
+    "crates/chim-std",
+]
+
+[workspace.dependencies]
+lasso = "0.7"
+rayon = "1.8"
+smallvec = "1.11"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+thiserror = "1.0"
+log = "0.4"
+anyhow = "1.0"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+lto = true

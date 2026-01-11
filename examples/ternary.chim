@@ -1,0 +1,36 @@
+fn main() {
+    let x = 42;
+    let hex = 0xFF;
+    let binary = 0b1010;
+    let octal = 0o755;
+    let ternary = 0t120;
+    let balanced = 0e1-0;
+    let duodecimal = 0d10;
+    let tetravigesimal = 0h10;
+    let sexagesimal = 0s10;
+    
+    println("Decimal: {}", x);
+    println("Hexadecimal: {}", hex);
+    println("Binary: {}", binary);
+    println("Octal: {}", octal);
+    println("Ternary: {}", ternary);
+    println("Balanced Ternary: {}", balanced);
+    println("Duodecimal (12): {}", duodecimal);
+    println("Tetravigesimal (24): {}", tetravigesimal);
+    println("Sexagesimal (60): {}", sexagesimal);
+    
+    let ternary_value = 0t210;
+    println("Ternary 0t210 = {}", ternary_value);
+    
+    let balanced_value = 0e1-1;
+    println("Balanced 0e1-1 = {}", balanced_value);
+    
+    let duodecimal_value = 0d1a;
+    println("Duodecimal 0d1a = {}", duodecimal_value);
+    
+    let tetravigesimal_value = 0h1a;
+    println("Tetravigesimal 0h1a = {}", tetravigesimal_value);
+    
+    let sexagesimal_value = 0s1a;
+    println("Sexagesimal 0s1a = {}", sexagesimal_value);
+}

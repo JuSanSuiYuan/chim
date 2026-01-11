@@ -1,4 +1,0 @@
-// Test physical units support
-
-// Basic unit usage
-let length = 10.0m;

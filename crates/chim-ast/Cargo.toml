@@ -1,0 +1,10 @@
+[package]
+name = "chim-ast"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chim-span = { path = "../chim-span" }
+chim-error = { path = "../chim-error" }
+smallvec = "1.11"
+thiserror = "1.0"

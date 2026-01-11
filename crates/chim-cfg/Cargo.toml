@@ -1,0 +1,8 @@
+[package]
+name = "chim-cfg"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chim-ir = { path = "../chim-ir" }
+chim-semantic = { path = "../chim-semantic" }

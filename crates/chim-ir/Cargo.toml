@@ -1,0 +1,11 @@
+[package]
+name = "chim-ir"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chim-ast = { path = "../chim-ast" }
+chim-semantic = { path = "../chim-semantic" }
+chim-span = { path = "../chim-span" }
+smallvec = "1.11"
+thiserror = "1.0"

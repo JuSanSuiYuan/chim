@@ -357,6 +357,162 @@ impl Default for WASMGenerator {
 
 pub struct NativeGenerator;
 
+impl NativeGenerator {
+    fn generate_instruction(instr: &Instruction) -> String {
+        match instr {
+            Instruction::Alloca { dest, ty } => {
+                let ty_str = match ty {
+                    IRType::Int32 => "int",
+                    IRType::Float32 => "float",
+                    IRType::Bool => "int",
+                    IRType::String => "char*",
+                    IRType::Array(_, _) => "void*",
+                    IRType::Struct(name) => return format!("    struct {} {};\n", name, dest),
+                    _ => "void*",
+                };
+                format!("    {} {};\n", ty_str, dest)
+            }
+            
+            Instruction::Load { dest, src } => {
+                format!("    {} = *({});\n", dest, src)
+            }
+            
+            Instruction::Store { dest, src } => {
+                format!("    *({}) = {};\n", dest, src)
+            }
+            
+            Instruction::GetPointer { dest, src, offset } => {
+                format!("    {} = (void*)((char*){} + {});\n", dest, src, offset)
+            }
+            
+            Instruction::Add { dest, left, right } => {
+                format!("    {} = {} + {};\n", dest, left, right)
+            }
+            
+            Instruction::Sub { dest, left, right } => {
+                format!("    {} = {} - {};\n", dest, left, right)
+            }
+            
+            Instruction::Mul { dest, left, right } => {
+                format!("    {} = {} * {};\n", dest, left, right)
+            }
+            
+            Instruction::Div { dest, left, right } => {
+                format!("    {} = {} / {};\n", dest, left, right)
+            }
+            
+            Instruction::Mod { dest, left, right } => {
+                format!("    {} = {} % {};\n", dest, left, right)
+            }
+            
+            Instruction::Eq { dest, left, right } => {
+                format!("    {} = ({} == {});\n", dest, left, right)
+            }
+            
+            Instruction::Ne { dest, left, right } => {
+                format!("    {} = ({} != {});\n", dest, left, right)
+            }
+            
+            Instruction::Lt { dest, left, right } => {
+                format!("    {} = ({} < {});\n", dest, left, right)
+            }
+            
+            Instruction::Le { dest, left, right } => {
+                format!("    {} = ({} <= {});\n", dest, left, right)
+            }
+            
+            Instruction::Gt { dest, left, right } => {
+                format!("    {} = ({} > {});\n", dest, left, right)
+            }
+            
+            Instruction::Ge { dest, left, right } => {
+                format!("    {} = ({} >= {});\n", dest, left, right)
+            }
+            
+            Instruction::And { dest, left, right } => {
+                format!("    {} = ({} && {});\n", dest, left, right)
+            }
+            
+            Instruction::Or { dest, left, right } => {
+                format!("    {} = ({} || {});\n", dest, left, right)
+            }
+            
+            Instruction::Not { dest, src } => {
+                format!("    {} = !{};\n", dest, src)
+            }
+            
+            Instruction::Call { dest, func, args } => {
+                if let Some(d) = dest {
+                    format!("    {} = {}({});\n", d, func, args.join(", "))
+                } else {
+                    format!("    {}({});\n", func, args.join(", "))
+                }
+            }
+            
+            Instruction::Br(label) => {
+                format!("    goto {};\n", label)
+            }
+            
+            Instruction::CondBr { cond, true_bb, false_bb } => {
+                format!("    if ({}) goto {}; else goto {};\n", cond, true_bb, false_bb)
+            }
+            
+            Instruction::Label(name) => {
+                format!("{}:\n", name)
+            }
+            
+            Instruction::Return(None) => {
+                "    return;\n".to_string()
+            }
+            
+            Instruction::Return(Some(val)) => {
+                format!("    return {};\n", val)
+            }
+            
+            Instruction::ReturnInPlace(_) => {
+                "    return;\n".to_string()
+            }
+            
+            Instruction::Borrow { dest, src, mutable: _ } => {
+                format!("    {} = &{};\n", dest, src)
+            }
+            
+            Instruction::Deref { dest, src } => {
+                format!("    {} = *{};\n", dest, src)
+            }
+            
+            Instruction::Phi { dest, incoming } => {
+                let pairs: Vec<String> = incoming
+                    .iter()
+                    .map(|(val, _)| val.clone())
+                    .collect();
+                format!("    // phi: {} = {}\n    {} = {};\n", dest, pairs.join(", "), dest, pairs.first().unwrap_or(&dest))
+            }
+            
+            Instruction::ExtractValue { dest, src, index } => {
+                format!("    {} = {}.field_{};\n", dest, src, index)
+            }
+            
+            Instruction::InsertValue { dest, src, value, index } => {
+                format!("    {}.field_{} = {};\n    {} = {};\n", src, index, value, dest, src)
+            }
+            
+            Instruction::GetElementPtr { dest, src, indices } => {
+                let indices_str: Vec<String> = indices.iter().map(|i| i.to_string()).collect();
+                format!("    {} = (void*)((char*){} + {});\n", dest, src, indices_str.join(" + "))
+            }
+            
+            Instruction::Nop => {
+                "    // nop\n".to_string()
+            }
+            
+            Instruction::Unreachable => {
+                "    // unreachable\n    return;\n".to_string()
+            }
+        }
+    }
+}
+
 impl TargetCodeGenerator for NativeGenerator {
     fn generate(&self, module: &Module) -> String {
         let mut output = String::new();
@@ -401,8 +557,57 @@ impl TargetCodeGenerator for NativeGenerator {
                 .collect();
             output.push_str(&params.join(", "));
             output.push_str(") {\n");
-            output.push_str("    // TODO: Implement function body\n");
+            
+            // 函数体生成
+            for instr in &func.body {
+                let c_instr = Self::generate_instruction(instr);
+                output.push_str(&c_instr);
+            }
+            
             output.push_str("}\n\n");
+        }
+        
+        // 结构体定义
+        if !module.structs.is_empty() {
+            output.push_str("// Struct definitions\n");
+            for struct_ in &module.structs {
+                output.push_str(&format!("struct {} {{\n", struct_.name));
+                for (field_name, field_type) in &struct_.fields {
+                    let ty = match field_type {
+                        IRType::Int32 => "int",
+                        IRType::Float32 => "float",
+                        IRType::Bool => "int",
+                        IRType::String => "char*",
+                        IRType::Array(_, _) => "void*",
+                        IRType::Struct(s) => &s,
+                        IRType::Ptr(t) => match t.as_ref() {
+                            IRType::Int32 => "int*",
+                            IRType::Float32 => "float*",
+                            IRType::Bool => "int*",
+                            IRType::String => "char**",
+                            _ => "void*",
+                        },
+                        _ => "void*",
+                    };
+                    output.push_str(&format!("    {} {};\n", ty, field_name));
+                }
+                output.push_str("};\n\n");
+            }
+        }
+        
+        // 全局变量
+        if !module.globals.is_empty() {
+            output.push_str("// Global variables\n");
+            for global in &module.globals {
+                let ty = match &global.ty {
+                    IRType::Int32 => "int",
+                    IRType::Float32 => "float",
+                    IRType::Bool => "int",
+                    IRType::String => "char*",
+                    _ => "void*",
+                };
+                output.push_str(&format!("{} {};\n", ty, global.name));
+            }
         }
         
         output

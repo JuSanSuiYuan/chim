@@ -488,6 +488,211 @@ impl LifetimeContext {
     }
 }
 
+impl SemanticAnalyzer {
+    fn analyze_import_statement(&mut self, path: &str, alias: Option<&String>) -> Result<(), Vec<SemanticError>> {
+        // 简化实现：只检查路径格式，不实际加载模块
+        // 实际实现需要文件系统访问和模块解析
+        
+        // 检查路径是否为空
+        if path.is_empty() {
+            self.errors.push(SemanticError::InvalidSyntax(
+                "import路径不能为空".to_string()
+            ));
+            return Err(self.errors.clone());
+        }
+        
+        // 提取模块名（路径的最后一部分，去掉扩展名）
+        let module_name = if let Some(last_slash) = path.rfind('/') {
+            &path[last_slash + 1..]
+        } else if let Some(last_backslash) = path.rfind('\\') {
+            &path[last_backslash + 1..]
+        } else {
+            path
+        };
+        
+        // 去掉扩展名
+        let module_name = if let Some(dot_pos) = module_name.find('.') {
+            &module_name[..dot_pos]
+        } else {
+            module_name
+        };
+        
+        // 使用别名或模块名
+        let import_name = alias.unwrap_or(&module_name.to_string()).clone();
+        
+        // 将导入的模块注册到符号表
+        let symbol = Symbol {
+            name: import_name.clone(),
+            kind: SymbolKind::TypeAlias {
+                ty: format!("module({})", path),
+            },
+            position: (self.current_line, self.current_column),
+        };
+        
+        if let Err(err) = self.symbol_table.define_symbol(symbol) {
+            self.errors.push(err);
+            return Err(self.errors.clone());
+        }
+        
+        Ok(())
+    }
+    
+    fn analyze_actor_statement(&mut self, name: &str, fields: &[ast::StructField], behaviors: &[ast::Statement]) -> Result<(), Vec<SemanticError>> {
+        // 检查字段类型是否有效
+        for field in fields {
+            if !self.symbol_table.is_type(&field.ty) {
+                self.errors.push(SemanticError::InvalidType(field.ty.clone()));
+                return Err(self.errors.clone());
+            }
+        }
+        
+        // 定义Actor到符号表（作为结构体）
+        let symbol = Symbol {
+            name: name.to_string(),
+            kind: SymbolKind::Struct {
+                fields: fields.to_vec(),
+            },
+            position: (self.current_line, self.current_column),
+        };
+        
+        if let Err(err) = self.symbol_table.define_symbol(symbol) {
+            self.errors.push(err);
+            return Err(self.errors.clone());
+        }
+        
+        // 进入Actor作用域
+        self.symbol_table.enter_scope();
+        
+        // 定义Actor字段
+        for field in fields {
+            let field_symbol = Symbol {
+                name: field.name.clone(),
+                kind: SymbolKind::Variable {
+                    mutable: false,
+                    ty: field.ty.clone(),
+                },
+                position: (self.current_line, self.current_column),
+            };
+            
+            if let Err(err) = self.symbol_table.define_symbol(field_symbol) {
+                self.errors.push(err);
+                self.symbol_table.exit_scope();
+                return Err(self.errors.clone());
+            }
+        }
+        
+        // 分析Behavior方法
+        for behavior in behaviors {
+            self.analyze_statement(behavior)?;
+        }
+        
+        // 退出Actor作用域
+        self.symbol_table.exit_scope();
+        
+        Ok(())
+    }
+    
+    fn analyze_entity_statement(&mut self, name: &str, components: &[String]) -> Result<(), Vec<SemanticError>> {
+        // 检查所有组件是否已定义
+        for comp_name in components {
+            if !self.symbol_table.is_type(comp_name) {
+                self.errors.push(SemanticError::UndefinedIdentifier(
+                    format!("组件 '{}' 未定义", comp_name)
+                ));
+                return Err(self.errors.clone());
+            }
+        }
+        
+        // 定义Entity到符号表
+        let symbol = Symbol {
+            name: name.to_string(),
+            kind: SymbolKind::TypeAlias {
+                ty: format!("Entity[{}]", components.join(", "))
+            },
+            position: (self.current_line, self.current_column),
+        };
+        
+        if let Err(err) = self.symbol_table.define_symbol(symbol) {
+            self.errors.push(err);
+            return Err(self.errors.clone());
+        }
+        
+        Ok(())
+    }
+    
+    fn analyze_component_statement(&mut self, name: &str, fields: &[ast::StructField]) -> Result<(), Vec<SemanticError>> {
+        // 检查字段类型是否有效
+        for field in fields {
+            if !self.symbol_table.is_type(&field.ty) {
+                self.errors.push(SemanticError::InvalidType(field.ty.clone()));
+                return Err(self.errors.clone());
+            }
+        }
+        
+        // 定义Component到符号表（作为结构体）
+        let symbol = Symbol {
+            name: name.to_string(),
+            kind: SymbolKind::Struct {
+                fields: fields.to_vec(),
+            },
+            position: (self.current_line, self.current_column),
+        };
+        
+        if let Err(err) = self.symbol_table.define_symbol(symbol) {
+            self.errors.push(err);
+            return Err(self.errors.clone());
+        }
+        
+        Ok(())
+    }
+    
+    fn analyze_system_statement(&mut self, name: &str, query: &[String], body: &ast::Expression) -> Result<(), Vec<SemanticError>> {
+        // 检查查询的组件是否已定义
+        for comp_name in query {
+            if !self.symbol_table.is_type(comp_name) {
+                self.errors.push(SemanticError::UndefinedIdentifier(
+                    format!("组件 '{}' 未定义", comp_name)
+                ));
+                return Err(self.errors.clone());
+            }
+        }
+        
+        // 进入系统作用域
+        self.symbol_table.enter_scope();
+        
+        // 分析系统体
+        let body_type = self.analyze_expression(body)?;
+        
+        // 系统应该返回void
+        if body_type != "void" {
+            self.errors.push(SemanticError::TypeMismatch {
+                expected: "void".to_string(),
+                found: body_type,
+            });
+        }
+        
+        // 退出系统作用域
+        self.symbol_table.exit_scope();
+        
+        // 定义System到符号表
+        let symbol = Symbol {
+            name: name.to_string(),
+            kind: SymbolKind::Function {
+                params: query.iter().map(|c| (c.clone(), "Component".to_string())).collect(),
+                return_type: "void".to_string(),
+            },
+            position: (self.current_line, self.current_column),
+        };
+        
+        if let Err(err) = self.symbol_table.define_symbol(symbol) {
+            self.errors.push(err);
+            return Err(self.errors.clone());
+        }
+        
+        Ok(())
+    }
+}
+
 pub struct BorrowChecker {
     pub lifetime_context: LifetimeContext,
     pub errors: Vec<LifetimeError>,
@@ -1542,6 +1747,12 @@ pub struct SemanticAnalyzer {
     pub errors: Vec<SemanticError>,
     pub current_line: usize,
     pub current_column: usize,
+    /// 当前函数的返回类型（用于返回语句检查）
+    current_function_return_type: Option<String>,
+    /// 当前函数名称
+    current_function_name: Option<String>,
+    /// 是否在函数内部
+    in_function: bool,
 }
 
 impl SemanticAnalyzer {
@@ -1558,6 +1769,9 @@ impl SemanticAnalyzer {
             errors: Vec::new(),
             current_line: 1,
             current_column: 1,
+            current_function_return_type: None,
+            current_function_name: None,
+            in_function: false,
         }
     }
     
@@ -1601,22 +1815,27 @@ impl SemanticAnalyzer {
             ast::Statement::For { pattern, in_expr, body, .. } => {
                 self.analyze_for_statement(pattern, in_expr, body)
             },
-            ast::Statement::Import(_) | ast::Statement::ImportAs(_, _) => {
-                // 暂时跳过导入语句
-                Ok(())
+            ast::Statement::Import(path) => {
+                self.analyze_import_statement(path, None)
+            },
+            ast::Statement::ImportAs(path, alias) => {
+                self.analyze_import_statement(path, Some(alias))
             },
             ast::Statement::Group { name, members, .. } => {
                 self.analyze_group_statement(name, members)
             },
-            // ECS声明 - 暂时跳过
-            ast::Statement::Entity { .. } | 
-            ast::Statement::Component { .. } | 
-            ast::Statement::System { .. } => {
-                Ok(())
+            // ECS声明
+            ast::Statement::Entity { name, components } => {
+                self.analyze_entity_statement(name, components)
             },
-            ast::Statement::Actor { .. } => {
-                // Actor语句，暂时跳过语义分析
-                Ok(())
+            ast::Statement::Component { name, fields } => {
+                self.analyze_component_statement(name, fields)
+            },
+            ast::Statement::System { name, query, body } => {
+                self.analyze_system_statement(name, query, body)
+            },
+            ast::Statement::Actor { name, fields, behaviors } => {
+                self.analyze_actor_statement(name, fields, behaviors)
             },
         }
     }
@@ -1723,7 +1942,7 @@ impl SemanticAnalyzer {
         let symbol = Symbol {
             name: name.to_string(),
             kind: SymbolKind::Function {
-                params: param_types,
+                params: param_types.clone(),
                 return_type: ret_ty.clone(),
             },
             position: (self.current_line, self.current_column),
@@ -1733,6 +1952,15 @@ impl SemanticAnalyzer {
             self.errors.push(err);
             return Err(self.errors.clone());
         }
+        
+        // 保存并设置当前函数上下文
+        let old_return_type = self.current_function_return_type.take();
+        let old_function_name = self.current_function_name.take();
+        let old_in_function = self.in_function;
+        
+        self.current_function_return_type = Some(ret_ty.clone());
+        self.current_function_name = Some(name.to_string());
+        self.in_function = true;
         
         // 进入函数作用域
         self.symbol_table.enter_scope();
@@ -1751,6 +1979,9 @@ impl SemanticAnalyzer {
             if let Err(err) = self.symbol_table.define_symbol(param_symbol) {
                 self.errors.push(err);
                 self.symbol_table.exit_scope();
+                self.current_function_return_type = old_return_type;
+                self.current_function_name = old_function_name;
+                self.in_function = old_in_function;
                 return Err(self.errors.clone());
             }
         }
@@ -1759,7 +1990,7 @@ impl SemanticAnalyzer {
         let body_type = self.analyze_expression(body)?;
         
         // 检查返回类型
-        if ret_ty != "void" && ret_ty != body_type {
+        if ret_ty != "void" && ret_ty != body_type && body_type != "void" {
             self.errors.push(SemanticError::TypeMismatch {
                 expected: ret_ty.clone(),
                 found: body_type.clone(),
@@ -1768,6 +1999,11 @@ impl SemanticAnalyzer {
         
         // 退出函数作用域
         self.symbol_table.exit_scope();
+        
+        // 恢复之前的函数上下文
+        self.current_function_return_type = old_return_type;
+        self.current_function_name = old_function_name;
+        self.in_function = old_in_function;
         
         Ok(())
     }
@@ -1837,8 +2073,46 @@ impl SemanticAnalyzer {
         Ok(())
     }
     
-    fn analyze_return_statement(&mut self, _expr: &Option<ast::Expression>) -> Result<(), Vec<SemanticError>> {
-        // 暂时跳过返回语句的分析，需要知道当前函数的返回类型
+    fn analyze_return_statement(&mut self, expr: &Option<ast::Expression>) -> Result<(), Vec<SemanticError>> {
+        // 检查是否在函数内部
+        if !self.in_function {
+            self.errors.push(SemanticError::InvalidSyntax(
+                "return语句只能在函数内部使用".to_string()
+            ));
+            return Err(self.errors.clone());
+        }
+        
+        // 获取当前函数的返回类型
+        let expected_type = self.current_function_return_type.clone().unwrap_or_else(|| "void".to_string());
+        
+        match expr {
+            Some(return_expr) => {
+                // 分析返回表达式的类型
+                let return_type = self.analyze_expression(return_expr)?;
+                
+                // 检查返回类型是否匹配
+                if expected_type == "void" {
+                    self.errors.push(SemanticError::CannotReturnFromVoidFunction);
+                    return Err(self.errors.clone());
+                }
+                
+                if return_type != expected_type && return_type != "auto" {
+                    self.errors.push(SemanticError::TypeMismatch {
+                        expected: expected_type,
+                        found: return_type,
+                    });
+                    return Err(self.errors.clone());
+                }
+            },
+            None => {
+                // 无返回值的return语句
+                if expected_type != "void" {
+                    self.errors.push(SemanticError::MissingReturnValue(expected_type));
+                    return Err(self.errors.clone());
+                }
+            },
+        }
+        
         Ok(())
     }
     
@@ -1865,18 +2139,21 @@ impl SemanticAnalyzer {
     }
     
     fn analyze_for_statement(&mut self, pattern: &str, in_expr: &ast::Expression, body: &ast::Expression) -> Result<(), Vec<SemanticError>> {
-        // 分析in表达式
-        self.analyze_expression(in_expr)?;
+        // 分析in表达式，获取迭代器类型
+        let iter_type = self.analyze_expression(in_expr)?;
+        
+        // 从迭代器类型推断循环变量类型
+        let element_type = self.infer_iterator_element_type(&iter_type)?;
         
         // 进入循环作用域
         self.symbol_table.enter_scope();
         
-        // 定义循环变量
+        // 定义循环变量，使用推断的类型
         let loop_var = Symbol {
             name: pattern.to_string(),
             kind: SymbolKind::Variable {
                 mutable: true,
-                ty: "auto".to_string(), // 暂时使用auto类型，后续需要推断
+                ty: element_type,
             },
             position: (self.current_line, self.current_column),
         };
@@ -1894,6 +2171,40 @@ impl SemanticAnalyzer {
         self.symbol_table.exit_scope();
         
         Ok(())
+    }
+    
+    /// 从迭代器类型推断元素类型
+    fn infer_iterator_element_type(&self, iter_type: &str) -> Result<String, Vec<SemanticError>> {
+        // 处理List[T]类型
+        if iter_type.starts_with("List[") && iter_type.ends_with(']') {
+            let inner_type = &iter_type[5..iter_type.len()-1];
+            return Ok(inner_type.to_string());
+        }
+        
+        // 处理Range类型
+        if iter_type == "range" || iter_type == "Range[int]" || iter_type == "Range[float]" {
+            return Ok("int".to_string());
+        }
+        
+        // 处理RangeInclusive类型
+        if iter_type == "RangeInclusive" || iter_type.starts_with("RangeInclusive[") {
+            return Ok("int".to_string());
+        }
+        
+        // 处理数组类型 [T; N]
+        if iter_type.starts_with('[') && iter_type.contains(';') && iter_type.ends_with(']') {
+            let semicolon_pos = iter_type.find(';').unwrap();
+            let inner_type = &iter_type[1..semicolon_pos];
+            return Ok(inner_type.trim().to_string());
+        }
+        
+        // 处理字符串类型（迭代字符）
+        if iter_type == "string" {
+            return Ok("string".to_string());
+        }
+        
+        // 默认返回auto类型
+        Ok("auto".to_string())
     }
     
     fn analyze_group_statement(&mut self, name: &str, members: &[ast::Statement]) -> Result<(), Vec<SemanticError>> {
@@ -1981,9 +2292,37 @@ impl SemanticAnalyzer {
             ast::Expression::Struct { name, fields } => {
                 self.analyze_struct_literal(name, fields)
             },
-            ast::Expression::Group { name: _name, members: _members } => {
-                // 暂时跳过组表达式的分析
-                Ok("group".to_string())
+            ast::Expression::Group { name, members } => {
+                // 分析组表达式
+                // 检查组是否已定义
+                if let Some(group_info) = self.group_manager.get_group(name) {
+                    // 验证组成员
+                    for member in members {
+                        match member {
+                            ast::Statement::Let { name: var_name, .. } => {
+                                // 检查变量是否在组中
+                                if !group_info.members.contains(var_name) {
+                                    self.errors.push(SemanticError::UndefinedIdentifier(
+                                        format!("'{}' 不是组 '{}' 的成员", var_name, name)
+                                    ));
+                                    return Err(self.errors.clone());
+                                }
+                            },
+                            _ => {
+                                self.errors.push(SemanticError::InvalidSyntax(
+                                    format!("组 '{}' 只能包含变量声明", name)
+                                ));
+                                return Err(self.errors.clone());
+                            }
+                        }
+                    }
+                    Ok("group".to_string())
+                } else {
+                    self.errors.push(SemanticError::UndefinedIdentifier(
+                        format!("未定义的组 '{}'", name)
+                    ));
+                    Err(self.errors.clone())
+                }
             },
         }
     }
@@ -2212,7 +2551,7 @@ impl SemanticAnalyzer {
     }
     
     fn analyze_index(&mut self, array: &ast::Expression, index: &ast::Expression) -> Result<String, Vec<SemanticError>> {
-        let _array_type = self.analyze_expression(array)?;
+        let array_type = self.analyze_expression(array)?;
         let index_type = self.analyze_expression(index)?;
         
         // 检查索引类型
@@ -2224,7 +2563,39 @@ impl SemanticAnalyzer {
             return Err(self.errors.clone());
         }
         
-        // 暂时返回auto类型，后续需要根据数组类型推断
+        // 从数组类型推断元素类型
+        let element_type = self.infer_array_element_type(&array_type)?;
+        
+        Ok(element_type)
+    }
+    
+    /// 从数组类型推断元素类型
+    fn infer_array_element_type(&self, array_type: &str) -> Result<String, Vec<SemanticError>> {
+        // 处理List[T]类型
+        if array_type.starts_with("List[") && array_type.ends_with(']') {
+            let inner_type = &array_type[5..array_type.len()-1];
+            return Ok(inner_type.to_string());
+        }
+        
+        // 处理数组类型 [T; N]
+        if array_type.starts_with('[') && array_type.contains(';') && array_type.ends_with(']') {
+            let semicolon_pos = array_type.find(';').unwrap();
+            let inner_type = &array_type[1..semicolon_pos];
+            return Ok(inner_type.trim().to_string());
+        }
+        
+        // 处理字符串类型（索引返回字符）
+        if array_type == "string" {
+            return Ok("string".to_string());
+        }
+        
+        // 处理Vec<T>类型
+        if array_type.starts_with("Vec<") && array_type.ends_with('>') {
+            let inner_type = &array_type[4..array_type.len()-1];
+            return Ok(inner_type.to_string());
+        }
+        
+        // 未知类型，返回auto
         Ok("auto".to_string())
     }
     
@@ -2317,7 +2688,7 @@ impl SemanticAnalyzer {
                 Err(self.errors.clone())
             },
             ast::Expression::Index { array, index } => {
-                let _array_type = self.analyze_expression(array)?;
+                let array_type = self.analyze_expression(array)?;
                 let index_type = self.analyze_expression(index)?;
                 
                 // 检查索引类型
@@ -2329,7 +2700,18 @@ impl SemanticAnalyzer {
                     return Err(self.errors.clone());
                 }
                 
-                // 暂时返回right_type，后续需要根据数组类型检查
+                // 获取数组元素类型
+                let element_type = self.infer_array_element_type(&array_type)?;
+                
+                // 检查赋值类型与元素类型是否匹配
+                if element_type != "auto" && right_type != element_type {
+                    self.errors.push(SemanticError::TypeMismatch {
+                        expected: element_type,
+                        found: right_type.clone(),
+                    });
+                    return Err(self.errors.clone());
+                }
+                
                 Ok(right_type)
             },
             _ => {
@@ -2351,7 +2733,8 @@ impl SemanticAnalyzer {
                     last_type = self.analyze_expression(expr)?;
                 },
                 ast::Statement::Return(expr) => {
-                    // 暂时跳过返回语句的分析
+                    // 分析返回语句，检查类型
+                    self.analyze_return_statement(expr)?;
                     if let Some(expr) = expr {
                         last_type = self.analyze_expression(expr)?;
                     }
@@ -2481,8 +2864,22 @@ impl SemanticAnalyzer {
                     Ok(())
                 } else {
                     // 变量绑定，检查类型
-                    // 暂时跳过，后续需要实现
-                    Ok(())
+                    // 将模式变量绑定到符号表，类型为expected_type
+                    let pattern_var = Symbol {
+                        name: name.clone(),
+                        kind: SymbolKind::Variable {
+                            mutable: false,
+                            ty: expected_type.to_string(),
+                        },
+                        position: (self.current_line, self.current_column),
+                    };
+                    
+                    if let Err(err) = self.symbol_table.define_symbol(pattern_var) {
+                        self.errors.push(err);
+                        Err(self.errors.clone())
+                    } else {
+                        Ok(())
+                    }
                 }
             },
             ast::Expression::Literal(_) => {
@@ -2636,7 +3033,8 @@ impl SemanticAnalyzer {
     
     fn analyze_array(&mut self, items: &[ast::Expression]) -> Result<String, Vec<SemanticError>> {
         if items.is_empty() {
-            // 空数组，暂时返回auto类型
+            // 空数组：尝试从上下文推断类型
+            // 如果无法推断，返回auto类型
             Ok("auto".to_string())
         } else {
             // 检查所有元素的类型是否一致

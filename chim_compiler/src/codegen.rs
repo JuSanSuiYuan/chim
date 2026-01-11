@@ -68,6 +68,130 @@ impl IRGenerator {
             _ => IRType::Int32,
         }
     }
+    
+    fn generate_ecs_entity(&mut self, name: &str, components: &[String]) -> Option<Function> {
+        let mut func = Function::new(
+            format!("{}_create", name),
+            IRType::Int32,
+        );
+        func.is_public = true;
+        
+        let entity_var = self.fresh_temp();
+        func.body.push(Instruction::Call {
+            dest: Some(entity_var.clone()),
+            func: "__ecs_entity_create".to_string(),
+            args: vec![],
+        });
+        
+        for comp in components {
+            let _init_call = Instruction::Call {
+                dest: None,
+                func: format!("__ecs_component_init_{}", comp),
+                args: vec![entity_var.clone()],
+            };
+            func.body.push(_init_call);
+        }
+        
+        func.body.push(Instruction::Return(Some(entity_var)));
+        
+        Some(func)
+    }
+    
+    fn generate_ecs_component(&mut self, name: &str, fields: &[ast::StructField]) -> Option<Function> {
+        let mut struct_ = ir::Struct::new(name.to_string());
+        for field in fields {
+            let ty = IRGenerator::convert_type(&field.ty);
+            struct_.fields.push((field.name.clone(), ty));
+        }
+        self.module.add_struct(struct_);
+        
+        let mut init_func = Function::new(
+            format!("__ecs_component_init_{}", name),
+            IRType::Void,
+        );
+        init_func.params.push(("entity_id".to_string(), IRType::Int32));
+        
+        let comp_ptr = self.fresh_temp();
+        init_func.body.push(Instruction::Alloca {
+            dest: comp_ptr.clone(),
+            ty: IRType::Ptr(Box::new(IRType::Void)),
+        });
+        
+        for field in fields {
+            let field_ptr = self.fresh_temp();
+            init_func.body.push(Instruction::GetElementPtr {
+                dest: field_ptr.clone(),
+                src: comp_ptr.clone(),
+                indices: vec![0],
+            });
+        }
+        
+        init_func.body.push(Instruction::Return(None));
+        
+        Some(init_func)
+    }
+    
+    fn generate_ecs_system(&mut self, name: &str, query: &[String], body: &ast::Expression) -> Option<Function> {
+        let mut func = Function::new(
+            name.to_string(),
+            IRType::Void,
+        );
+        func.is_public = true;
+        
+        func.params.push(("query_ctx".to_string(), IRType::Ptr(Box::new(IRType::Void))));
+        
+        let loop_label = self.fresh_label();
+        let body_label = self.fresh_label();
+        let exit_label = self.fresh_label();
+        
+        let query_iter = self.fresh_temp();
+        func.body.push(Instruction::Call {
+            dest: Some(query_iter.clone()),
+            func: "__ecs_query_create".to_string(),
+            args: query.iter().map(|c| format!("\"{}\"", c)).collect(),
+        });
+        
+        func.body.push(Instruction::Label(loop_label.clone()));
+        
+        let has_next = self.fresh_temp();
+        func.body.push(Instruction::Call {
+            dest: Some(has_next.clone()),
+            func: "__ecs_query_has_next".to_string(),
+            args: vec![query_iter.clone()],
+        });
+        
+        func.body.push(Instruction::CondBr {
+            cond: has_next,
+            true_bb: body_label.clone(),
+            false_bb: exit_label.clone(),
+        });
+        
+        func.body.push(Instruction::Label(body_label.clone()));
+        
+        let current_entity = self.fresh_temp();
+        func.body.push(Instruction::Call {
+            dest: Some(current_entity.clone()),
+            func: "__ecs_query_get_entity".to_string(),
+            args: vec![query_iter.clone()],
+        });
+        
+        let body_insts = self.generate_expression(body);
+        func.body.extend(body_insts);
+        
+        func.body.push(Instruction::Br(loop_label));
+        
+        func.body.push(Instruction::Label(exit_label.clone()));
+        
+        func.body.push(Instruction::Call {
+            dest: None,
+            func: "__ecs_query_destroy".to_string(),
+            args: vec![query_iter.clone()],
+        });
+        
+        func.body.push(Instruction::Return(None));
+        
+        Some(func)
+    }
 }
 
 impl CodeGenerator for IRGenerator {
@@ -123,11 +247,15 @@ impl CodeGenerator for IRGenerator {
                 self.module.add_struct(struct_);
                 None
             },
-            // ECS声明 - 暂时跳过
-            ast::Statement::Entity { .. } | 
-            ast::Statement::Component { .. } | 
-            ast::Statement::System { .. } => {
-                None
+            // ECS声明
+            ast::Statement::Entity { name, components } => {
+                self.generate_ecs_entity(name, components)
+            },
+            ast::Statement::Component { name, fields } => {
+                self.generate_ecs_component(name, fields)
+            },
+            ast::Statement::System { name, query, body } => {
+                self.generate_ecs_system(name, query, body)
             },
             _ => None,
         }

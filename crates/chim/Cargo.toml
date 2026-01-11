@@ -1,0 +1,26 @@
+[package]
+name = "chim"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "chim"
+path = "src/main.rs"
+
+[dependencies]
+chim-lexer = { path = "../chim-lexer" }
+chim-parser = { path = "../chim-parser" }
+chim-ast = { path = "../chim-ast" }
+chim-semantic = { path = "../chim-semantic" }
+chim-ir = { path = "../chim-ir" }
+chim-codegen = { path = "../chim-codegen" }
+chim-span = { path = "../chim-span" }
+chim-error = { path = "../chim-error" }
+lasso = "0.7"
+rayon = "1.8"
+smallvec = "1.11"
+clap = { version = "4.0", features = ["derive"] }
+thiserror = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"

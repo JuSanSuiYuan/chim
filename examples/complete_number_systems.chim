@@ -1,0 +1,139 @@
+// Chim多进制系统完整示例
+// 展示9种进制系统的使用
+
+fn main() {
+    println("=== Chim多进制系统演示 ===");
+    println!();
+    
+    // 1. 基本进制
+    println("1. 基本进制（十进制、十六进制、二进制、八进制）");
+    let decimal = 42;
+    let hex = 0xFF;
+    let binary = 0b1010;
+    let octal = 0o755;
+    
+    println("   十进制: 42 = {}", decimal);
+    println("   十六进制: 0xFF = {}", hex);
+    println("   二进制: 0b1010 = {}", binary);
+    println("   八进制: 0o755 = {}", octal);
+    println!();
+    
+    // 2. 三进制系统
+    println("2. 三进制系统");
+    let ternary = 0t120;
+    let balanced = 0e1-0;
+    
+    println("   三进制: 0t120 = {}", ternary);
+    println("   平衡三进制: 0e1-0 = {}", balanced);
+    println("   平衡三进制优势: 接近自然常数e，适合高精度计算");
+    println!();
+    
+    // 3. 十二进制
+    println("3. 十二进制（时间、商业）");
+    let dozen = 0d10;
+    let gross = 0d100;
+    let feet = 0d30;
+    
+    println("   一打: 0d10 = {}", dozen);
+    println("   一罗: 0d100 = {}", gross);
+    println("   2.5英尺: 0d30 = {}", feet);
+    println("   应用: 英寸测量、商品计数（打、罗）");
+    println!();
+    
+    // 4. 二十四进制
+    println("4. 二十四进制（时间）");
+    let hour = 0h10;
+    let half_day = 0h12;
+    let full_day = 0h20;
+    
+    println("   一小时: 0h10 = {}", hour);
+    println("   半天: 0h12 = {}", half_day);
+    println("   一天: 0h20 = {}", full_day);
+    println("   应用: 24小时制时间表示");
+    println!();
+    
+    // 5. 六十进制
+    println("5. 六十进制（时间、角度）");
+    let minute = 0s10;
+    let hour = 0s3c;
+    let degree = 0s10;
+    
+    println("   一分钟: 0s10 = {}", minute);
+    println("   一小时: 0s3c = {}", hour);
+    println("   一度: 0s10 = {}", degree);
+    println("   应用: 分钟/秒、角度测量");
+    println!();
+    
+    // 6. 数字分隔符
+    println("6. 数字分隔符（提高可读性）");
+    let large_decimal = 1_000_000_000;
+    let large_hex = 0xFF_FF_FF_FF;
+    let large_binary = 0b1111_1111_1111_1111;
+    let large_duodecimal = 0d1_000_000;
+    let large_tetravigesimal = 0h1_000_000;
+    let large_sexagesimal = 0s1_000_000;
+    
+    println("   十进制: 1_000_000_000 = {}", large_decimal);
+    println("   十六进制: 0xFF_FF_FF_FF = {}", large_hex);
+    println("   二进制: 0b1111_1111_1111_1111 = {}", large_binary);
+    println("   十二进制: 0d1_000_000 = {}", large_duodecimal);
+    println("   二十四进制: 0h1_000_000 = {}", large_tetravigesimal);
+    println("   六十进制: 0s1_000_000 = {}", large_sexagesimal);
+    println!();
+    
+    // 7. 实际应用
+    println("7. 实际应用示例");
+    println!();
+    
+    // 时间格式化
+    println("   时间格式化（24小时制 + 60分钟制 + 60秒制）:");
+    let hours = 14;
+    let minutes = 30;
+    let seconds = 45;
+    println("   {}:{}:{}", hours, minutes, seconds);
+    println!();
+    
+    // 角度格式化
+    println("   角度格式化（60进制）:");
+    let degrees = 90;
+    let arc_minutes = 30;
+    let arc_seconds = 15;
+    println("   {}°{}'{}\"", degrees, arc_minutes, arc_seconds);
+    println!();
+    
+    // 商业计数
+    println("   商业计数（12进制）:");
+    let items = 156;
+    let dozens = items / 12;
+    let remainder = items % 12;
+    println("   {} 件 = {} 打 + {} 件", items, dozens, remainder);
+    println!();
+    
+    // 8. 进制转换
+    println("8. 进制转换示例");
+    let value = 255;
+    println("   十进制: {}", value);
+    println("   十六进制: 0x{}", value.to_hex());
+    println("   二进制: 0b{}", value.to_binary());
+    println("   八进制: 0o{}", value.to_octal());
+    println("   三进制: 0t{}", value.to_ternary());
+    println("   平衡三进制: 0e{}", value.to_balanced_ternary());
+    println("   十二进制: 0d{}", value.to_duodecimal());
+    println("   二十四进制: 0h{}", value.to_tetravigesimal());
+    println("   六十进制: 0s{}", value.to_sexagesimal());
+    println!();
+    
+    // 9. 性能对比
+    println("9. 性能优势");
+    println("   ✓ 编译时计算: 零运行时开销");
+    println("   ✓ 类型安全: 编译器验证有效性");
+    println("   ✓ 优化友好: 常量折叠和死代码消除");
+    println("   ✓ 内存效率: 无额外内存开销");
+    println!();
+    
+    println("=== Chim支持9种进制系统 ===");
+    println("   十进制、十六进制、二进制、八进制");
+    println("   三进制、平衡三进制");
+    println("   十二进制、二十四进制、六十进制");
+    println("   是目前支持进制最多的编程语言之一！");
+}

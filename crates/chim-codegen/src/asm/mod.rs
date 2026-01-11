@@ -1,0 +1,27 @@
+pub mod assembler;
+
+pub use assembler::{
+    AssemblySyntax,
+    X86_64Register,
+    AArch64Register,
+    OperandSize,
+    AssemblyOperand,
+    MemoryOperand,
+    ImmediateValue,
+    X86_64Instruction,
+    AArch64Instruction,
+    ConditionCode,
+    BranchHint,
+    AssemblyBlock,
+    AssemblyDirective,
+    SectionType,
+    AssemblyFunction,
+    CallingConvention,
+    InlineAssembly,
+    InlineOperand,
+    AssemblyParser,
+    AssemblyError,
+    assemble_x86_64,
+    assemble_aarch64,
+    map_chim_type_to_asm,
+};

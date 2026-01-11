@@ -1,6 +1,7 @@
 pub mod wasm;
 pub mod native;
 pub mod llvm;
+pub mod llvm_machine;
 pub mod qbe;
 pub mod tinycc;
 pub mod cranelift;
@@ -29,6 +30,7 @@ pub mod msvc;
 pub mod compcert;
 pub mod lcc;
 pub mod chibicc;
+pub mod mold_linker;
 
 // GPU后端
 pub mod cuda;
@@ -58,3 +60,5 @@ pub mod erlang;
 pub mod matlab;
 pub mod php;
 pub mod june;
+pub mod agda;
+pub mod unison;

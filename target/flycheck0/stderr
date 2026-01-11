@@ -1,0 +1,2386 @@
+warning: virtual workspace defaulting to `resolver = "1"` despite one or more workspace members being on edition 2021 which implies `resolver = "2"`
+  |
+  = note: to keep the current resolver, specify `workspace.resolver = "1"` in the workspace root's manifest
+  = note: to use the edition 2021 resolver, specify `workspace.resolver = "2"` in the workspace root's manifest
+  = note: for more details see https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
+   0.207072700s  INFO prepare_target{force=false package_id=chim v0.1.0 (D:\PROJECT\chim\crates\chim) target="chim"}: cargo::core::compiler::fingerprint: fingerprint error for chim v0.1.0 (D:\PROJECT\chim\crates\chim)/Check { test: false }/TargetInner { name: "chim", doc: true, ..: with_path("D:\\PROJECT\\chim\\crates\\chim\\src\\main.rs", Edition2021) }
+   0.207133200s  INFO prepare_target{force=false package_id=chim v0.1.0 (D:\PROJECT\chim\crates\chim) target="chim"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-9def50011c4ddf53\bin-chim`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.232856400s  INFO prepare_target{force=false package_id=anyhow v1.0.100 target="anyhow"}: cargo::core::compiler::fingerprint: fingerprint error for anyhow v1.0.100/Check { test: false }/TargetInner { ..: lib_target("anyhow", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\anyhow-1.0.100\\src\\lib.rs", Edition2018) }
+   0.232913100s  INFO prepare_target{force=false package_id=anyhow v1.0.100 target="anyhow"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\anyhow-a76d3139cf6a5150\lib-anyhow`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.235354300s  INFO prepare_target{force=false package_id=anyhow v1.0.100 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for anyhow v1.0.100/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\anyhow-1.0.100\\build.rs", Edition2018) }
+   0.235395500s  INFO prepare_target{force=false package_id=anyhow v1.0.100 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\anyhow-d32ab4c8e2c609d9\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::cli::main
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  22: main
+  23: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  24: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  25: <unknown>
+  26: <unknown>
+   0.235964400s  INFO prepare_target{force=false package_id=anyhow v1.0.100 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for anyhow v1.0.100/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\anyhow-1.0.100\\build.rs", Edition2018) }
+   0.235989400s  INFO prepare_target{force=false package_id=anyhow v1.0.100 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\anyhow-1836bce9aa66e7d4\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::cli::main
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  21: main
+  22: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  23: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  24: <unknown>
+  25: <unknown>
+   0.237274700s  INFO prepare_target{force=false package_id=chim-ast v0.1.0 (D:\PROJECT\chim\crates\chim-ast) target="chim_ast"}: cargo::core::compiler::fingerprint: fingerprint error for chim-ast v0.1.0 (D:\PROJECT\chim\crates\chim-ast)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_ast", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-ast\\src\\lib.rs", Edition2021) }
+   0.237303900s  INFO prepare_target{force=false package_id=chim-ast v0.1.0 (D:\PROJECT\chim\crates\chim-ast) target="chim_ast"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-ast-da60c3c28b9617a1\lib-chim_ast`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.238300900s  INFO prepare_target{force=false package_id=chim-error v0.1.0 (D:\PROJECT\chim\crates\chim-error) target="chim_error"}: cargo::core::compiler::fingerprint: fingerprint error for chim-error v0.1.0 (D:\PROJECT\chim\crates\chim-error)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_error", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-error\\src\\lib.rs", Edition2021) }
+   0.238329000s  INFO prepare_target{force=false package_id=chim-error v0.1.0 (D:\PROJECT\chim\crates\chim-error) target="chim_error"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-error-7068085486edbc92\lib-chim_error`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::cli::main
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  20: main
+  21: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  22: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  23: <unknown>
+  24: <unknown>
+   0.239568100s  INFO prepare_target{force=false package_id=thiserror v1.0.69 target="thiserror"}: cargo::core::compiler::fingerprint: fingerprint error for thiserror v1.0.69/Check { test: false }/TargetInner { ..: lib_target("thiserror", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\thiserror-1.0.69\\src\\lib.rs", Edition2021) }
+   0.239594700s  INFO prepare_target{force=false package_id=thiserror v1.0.69 target="thiserror"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\thiserror-310386cf638762ae\lib-thiserror`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::cli::main
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  21: main
+  22: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  23: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  24: <unknown>
+  25: <unknown>
+   0.241569900s  INFO prepare_target{force=false package_id=thiserror v1.0.69 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for thiserror v1.0.69/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\thiserror-1.0.69\\build.rs", Edition2021) }
+   0.241595800s  INFO prepare_target{force=false package_id=thiserror v1.0.69 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\thiserror-72ad7cfbe1679710\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::cli::main
+  20: cargo::main
+  21: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  22: std::rt::lang_start::<()>::{closure#0}
+  23: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  24: main
+  25: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  26: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  27: <unknown>
+  28: <unknown>
+   0.242037000s  INFO prepare_target{force=false package_id=thiserror v1.0.69 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for thiserror v1.0.69/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\thiserror-1.0.69\\build.rs", Edition2021) }
+   0.242061200s  INFO prepare_target{force=false package_id=thiserror v1.0.69 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\thiserror-dabd75656ee38387\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::cli::main
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  23: main
+  24: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  25: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  26: <unknown>
+  27: <unknown>
+   0.243280800s  INFO prepare_target{force=false package_id=thiserror-impl v1.0.69 target="thiserror_impl"}: cargo::core::compiler::fingerprint: fingerprint error for thiserror-impl v1.0.69/Build/TargetInner { for_host: true, proc_macro: true, ..: lib_target("thiserror_impl", ["proc-macro"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\thiserror-impl-1.0.69\\src\\lib.rs", Edition2021) }
+   0.243312100s  INFO prepare_target{force=false package_id=thiserror-impl v1.0.69 target="thiserror_impl"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\thiserror-impl-60c07ff91eda537a\lib-thiserror_impl`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::cli::main
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  22: main
+  23: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  24: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  25: <unknown>
+  26: <unknown>
+   0.244319100s  INFO prepare_target{force=false package_id=proc-macro2 v1.0.105 target="proc_macro2"}: cargo::core::compiler::fingerprint: fingerprint error for proc-macro2 v1.0.105/Build/TargetInner { ..: lib_target("proc_macro2", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\proc-macro2-1.0.105\\src\\lib.rs", Edition2021) }
+   0.244345300s  INFO prepare_target{force=false package_id=proc-macro2 v1.0.105 target="proc_macro2"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\proc-macro2-e34180294ca482c9\lib-proc_macro2`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::cli::main
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  23: main
+  24: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  25: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  26: <unknown>
+  27: <unknown>
+   0.246449400s  INFO prepare_target{force=false package_id=proc-macro2 v1.0.105 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for proc-macro2 v1.0.105/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\proc-macro2-1.0.105\\build.rs", Edition2021) }
+   0.246480900s  INFO prepare_target{force=false package_id=proc-macro2 v1.0.105 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\proc-macro2-c69768861f46e8c1\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: cargo::core::compiler::compile
+  15: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  16: cargo::ops::cargo_compile::compile_ws
+  17: cargo::ops::cargo_compile::compile_with_exec
+  18: cargo::ops::cargo_compile::compile
+  19: cargo::commands::check::exec
+  20: <cargo::cli::Exec>::exec
+  21: cargo::cli::main
+  22: cargo::main
+  23: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  24: std::rt::lang_start::<()>::{closure#0}
+  25: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  26: main
+  27: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  28: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  29: <unknown>
+  30: <unknown>
+   0.246974500s  INFO prepare_target{force=false package_id=proc-macro2 v1.0.105 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for proc-macro2 v1.0.105/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\proc-macro2-1.0.105\\build.rs", Edition2021) }
+   0.246999200s  INFO prepare_target{force=false package_id=proc-macro2 v1.0.105 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\proc-macro2-08a68a493d1a3c35\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  15: cargo::ops::cargo_compile::compile_ws
+  16: cargo::ops::cargo_compile::compile_with_exec
+  17: cargo::ops::cargo_compile::compile
+  18: cargo::commands::check::exec
+  19: <cargo::cli::Exec>::exec
+  20: cargo::cli::main
+  21: cargo::main
+  22: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  23: std::rt::lang_start::<()>::{closure#0}
+  24: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  25: main
+  26: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  27: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  28: <unknown>
+  29: <unknown>
+   0.248620300s  INFO prepare_target{force=false package_id=quote v1.0.43 target="quote"}: cargo::core::compiler::fingerprint: fingerprint error for quote v1.0.43/Build/TargetInner { ..: lib_target("quote", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\quote-1.0.43\\src\\lib.rs", Edition2021) }
+   0.248665600s  INFO prepare_target{force=false package_id=quote v1.0.43 target="quote"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\quote-279ab01a83998fce\lib-quote`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::cli::main
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  23: main
+  24: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  25: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  26: <unknown>
+  27: <unknown>
+   0.250842700s  INFO prepare_target{force=false package_id=quote v1.0.43 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for quote v1.0.43/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\quote-1.0.43\\build.rs", Edition2021) }
+   0.250875800s  INFO prepare_target{force=false package_id=quote v1.0.43 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\quote-bae36865a8cb0436\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: cargo::core::compiler::compile
+  15: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  16: cargo::ops::cargo_compile::compile_ws
+  17: cargo::ops::cargo_compile::compile_with_exec
+  18: cargo::ops::cargo_compile::compile
+  19: cargo::commands::check::exec
+  20: <cargo::cli::Exec>::exec
+  21: cargo::cli::main
+  22: cargo::main
+  23: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  24: std::rt::lang_start::<()>::{closure#0}
+  25: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  26: main
+  27: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  28: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  29: <unknown>
+  30: <unknown>
+   0.251353600s  INFO prepare_target{force=false package_id=quote v1.0.43 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for quote v1.0.43/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\quote-1.0.43\\build.rs", Edition2021) }
+   0.251378500s  INFO prepare_target{force=false package_id=quote v1.0.43 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\quote-6c1a6206486a1685\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  15: cargo::ops::cargo_compile::compile_ws
+  16: cargo::ops::cargo_compile::compile_with_exec
+  17: cargo::ops::cargo_compile::compile
+  18: cargo::commands::check::exec
+  19: <cargo::cli::Exec>::exec
+  20: cargo::cli::main
+  21: cargo::main
+  22: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  23: std::rt::lang_start::<()>::{closure#0}
+  24: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  25: main
+  26: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  27: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  28: <unknown>
+  29: <unknown>
+   0.252807900s  INFO prepare_target{force=false package_id=syn v2.0.114 target="syn"}: cargo::core::compiler::fingerprint: fingerprint error for syn v2.0.114/Build/TargetInner { ..: lib_target("syn", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\syn-2.0.114\\src\\lib.rs", Edition2021) }
+   0.252847100s  INFO prepare_target{force=false package_id=syn v2.0.114 target="syn"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\syn-73e1d0644a637ba5\lib-syn`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::cli::main
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  23: main
+  24: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  25: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  26: <unknown>
+  27: <unknown>
+   0.254296400s  INFO prepare_target{force=false package_id=chim-codegen v0.1.0 (D:\PROJECT\chim\crates\chim-codegen) target="chim_codegen"}: cargo::core::compiler::fingerprint: fingerprint error for chim-codegen v0.1.0 (D:\PROJECT\chim\crates\chim-codegen)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_codegen", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-codegen\\src\\lib.rs", Edition2021) }
+   0.254325000s  INFO prepare_target{force=false package_id=chim-codegen v0.1.0 (D:\PROJECT\chim\crates\chim-codegen) target="chim_codegen"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-codegen-b43b1f594a0dfd95\lib-chim_codegen`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.255278400s  INFO prepare_target{force=false package_id=chim-ir v0.1.0 (D:\PROJECT\chim\crates\chim-ir) target="chim_ir"}: cargo::core::compiler::fingerprint: fingerprint error for chim-ir v0.1.0 (D:\PROJECT\chim\crates\chim-ir)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_ir", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-ir\\src\\lib.rs", Edition2021) }
+   0.255305600s  INFO prepare_target{force=false package_id=chim-ir v0.1.0 (D:\PROJECT\chim\crates\chim-ir) target="chim_ir"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-ir-5935bde2cc894d26\lib-chim_ir`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::cli::main
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  20: main
+  21: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  22: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  23: <unknown>
+  24: <unknown>
+   0.256242600s  INFO prepare_target{force=false package_id=chim-semantic v0.1.0 (D:\PROJECT\chim\crates\chim-semantic) target="chim_semantic"}: cargo::core::compiler::fingerprint: fingerprint error for chim-semantic v0.1.0 (D:\PROJECT\chim\crates\chim-semantic)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_semantic", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-semantic\\src\\lib.rs", Edition2021) }
+   0.256270800s  INFO prepare_target{force=false package_id=chim-semantic v0.1.0 (D:\PROJECT\chim\crates\chim-semantic) target="chim_semantic"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-semantic-728965af27450771\lib-chim_semantic`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::cli::main
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  21: main
+  22: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  23: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  24: <unknown>
+  25: <unknown>
+   0.257259900s  INFO prepare_target{force=false package_id=lasso v0.7.3 target="lasso"}: cargo::core::compiler::fingerprint: fingerprint error for lasso v0.7.3/Check { test: false }/TargetInner { ..: lib_target("lasso", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\lasso-0.7.3\\src\\lib.rs", Edition2021) }
+   0.257286500s  INFO prepare_target{force=false package_id=lasso v0.7.3 target="lasso"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\lasso-ae2cca9cf08d2ed5\lib-lasso`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::cli::main
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  22: main
+  23: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  24: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  25: <unknown>
+  26: <unknown>
+   0.258221600s  INFO prepare_target{force=false package_id=hashbrown v0.14.5 target="hashbrown"}: cargo::core::compiler::fingerprint: fingerprint error for hashbrown v0.14.5/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("hashbrown", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashbrown-0.14.5\\src\\lib.rs", Edition2021) }
+   0.258249600s  INFO prepare_target{force=false package_id=hashbrown v0.14.5 target="hashbrown"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\hashbrown-9a739c9bc6d6939d\lib-hashbrown`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::cli::main
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  23: main
+  24: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  25: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  26: <unknown>
+  27: <unknown>
+   0.259243200s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="ahash"}: cargo::core::compiler::fingerprint: fingerprint error for ahash v0.8.12/Check { test: false }/TargetInner { ..: lib_target("ahash", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\ahash-0.8.12\\src\\lib.rs", Edition2018) }
+   0.259274800s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="ahash"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\ahash-fc241444fe76628e\lib-ahash`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::cli::main
+  20: cargo::main
+  21: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  22: std::rt::lang_start::<()>::{closure#0}
+  23: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  24: main
+  25: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  26: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  27: <unknown>
+  28: <unknown>
+   0.261578700s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for ahash v0.8.12/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\ahash-0.8.12\\build.rs", Edition2018) }
+   0.261618000s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\ahash-54e7e98f298d4b78\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: cargo::core::compiler::compile
+  15: cargo::core::compiler::compile
+  16: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  17: cargo::ops::cargo_compile::compile_ws
+  18: cargo::ops::cargo_compile::compile_with_exec
+  19: cargo::ops::cargo_compile::compile
+  20: cargo::commands::check::exec
+  21: <cargo::cli::Exec>::exec
+  22: cargo::cli::main
+  23: cargo::main
+  24: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  25: std::rt::lang_start::<()>::{closure#0}
+  26: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  27: main
+  28: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  29: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  30: <unknown>
+  31: <unknown>
+   0.262150200s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for ahash v0.8.12/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\ahash-0.8.12\\build.rs", Edition2018) }
+   0.262176000s  INFO prepare_target{force=false package_id=ahash v0.8.12 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\ahash-1dc3daa4295b30ed\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: cargo::core::compiler::compile
+  15: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  16: cargo::ops::cargo_compile::compile_ws
+  17: cargo::ops::cargo_compile::compile_with_exec
+  18: cargo::ops::cargo_compile::compile
+  19: cargo::commands::check::exec
+  20: <cargo::cli::Exec>::exec
+  21: cargo::cli::main
+  22: cargo::main
+  23: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  24: std::rt::lang_start::<()>::{closure#0}
+  25: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  26: main
+  27: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  28: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  29: <unknown>
+  30: <unknown>
+   0.264703700s  INFO prepare_target{force=false package_id=zerocopy v0.8.33 target="zerocopy"}: cargo::core::compiler::fingerprint: fingerprint error for zerocopy v0.8.33/Check { test: false }/TargetInner { ..: lib_target("zerocopy", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerocopy-0.8.33\\src\\lib.rs", Edition2021) }
+   0.264742400s  INFO prepare_target{force=false package_id=zerocopy v0.8.33 target="zerocopy"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\zerocopy-7ad1b8d0540152ce\lib-zerocopy`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  15: cargo::ops::cargo_compile::compile_ws
+  16: cargo::ops::cargo_compile::compile_with_exec
+  17: cargo::ops::cargo_compile::compile
+  18: cargo::commands::check::exec
+  19: <cargo::cli::Exec>::exec
+  20: cargo::cli::main
+  21: cargo::main
+  22: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  23: std::rt::lang_start::<()>::{closure#0}
+  24: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  25: main
+  26: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  27: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  28: <unknown>
+  29: <unknown>
+   0.266826000s  INFO prepare_target{force=false package_id=zerocopy v0.8.33 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for zerocopy v0.8.33/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerocopy-0.8.33\\build.rs", Edition2021) }
+   0.266860000s  INFO prepare_target{force=false package_id=zerocopy v0.8.33 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\zerocopy-15e07245922d4c60\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: cargo::core::compiler::compile
+  15: cargo::core::compiler::compile
+  16: cargo::core::compiler::compile
+  17: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  18: cargo::ops::cargo_compile::compile_ws
+  19: cargo::ops::cargo_compile::compile_with_exec
+  20: cargo::ops::cargo_compile::compile
+  21: cargo::commands::check::exec
+  22: <cargo::cli::Exec>::exec
+  23: cargo::cli::main
+  24: cargo::main
+  25: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  26: std::rt::lang_start::<()>::{closure#0}
+  27: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  28: main
+  29: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  30: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  31: <unknown>
+  32: <unknown>
+   0.267362300s  INFO prepare_target{force=false package_id=zerocopy v0.8.33 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for zerocopy v0.8.33/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerocopy-0.8.33\\build.rs", Edition2021) }
+   0.267387200s  INFO prepare_target{force=false package_id=zerocopy v0.8.33 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\zerocopy-0a29e1d0ad984278\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: cargo::core::compiler::compile
+  15: cargo::core::compiler::compile
+  16: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  17: cargo::ops::cargo_compile::compile_ws
+  18: cargo::ops::cargo_compile::compile_with_exec
+  19: cargo::ops::cargo_compile::compile
+  20: cargo::commands::check::exec
+  21: <cargo::cli::Exec>::exec
+  22: cargo::cli::main
+  23: cargo::main
+  24: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  25: std::rt::lang_start::<()>::{closure#0}
+  26: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  27: main
+  28: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  29: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  30: <unknown>
+  31: <unknown>
+   0.269039300s  INFO prepare_target{force=false package_id=chim-lexer v0.1.0 (D:\PROJECT\chim\crates\chim-lexer) target="chim_lexer"}: cargo::core::compiler::fingerprint: fingerprint error for chim-lexer v0.1.0 (D:\PROJECT\chim\crates\chim-lexer)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_lexer", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-lexer\\src\\lib.rs", Edition2021) }
+   0.269071500s  INFO prepare_target{force=false package_id=chim-lexer v0.1.0 (D:\PROJECT\chim\crates\chim-lexer) target="chim_lexer"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-lexer-dd129d93973e1387\lib-chim_lexer`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.270123800s  INFO prepare_target{force=false package_id=logos v0.14.4 target="logos"}: cargo::core::compiler::fingerprint: fingerprint error for logos v0.14.4/Check { test: false }/TargetInner { benched: false, ..: lib_target("logos", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\logos-0.14.4\\src\\lib.rs", Edition2021) }
+   0.270150800s  INFO prepare_target{force=false package_id=logos v0.14.4 target="logos"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\logos-099b55c7b9f2dfbb\lib-logos`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::cli::main
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  20: main
+  21: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  22: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  23: <unknown>
+  24: <unknown>
+   0.271106300s  INFO prepare_target{force=false package_id=logos-derive v0.14.4 target="logos_derive"}: cargo::core::compiler::fingerprint: fingerprint error for logos-derive v0.14.4/Build/TargetInner { benched: false, for_host: true, proc_macro: true, ..: lib_target("logos_derive", ["proc-macro"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\logos-derive-0.14.4\\src\\lib.rs", Edition2021) }
+   0.271133700s  INFO prepare_target{force=false package_id=logos-derive v0.14.4 target="logos_derive"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\logos-derive-bcbefbeb6bbe622d\lib-logos_derive`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::cli::main
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  21: main
+  22: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  23: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  24: <unknown>
+  25: <unknown>
+   0.272115200s  INFO prepare_target{force=false package_id=logos-codegen v0.14.4 target="logos_codegen"}: cargo::core::compiler::fingerprint: fingerprint error for logos-codegen v0.14.4/Build/TargetInner { benched: false, ..: lib_target("logos_codegen", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\logos-codegen-0.14.4\\src\\lib.rs", Edition2021) }
+   0.272142300s  INFO prepare_target{force=false package_id=logos-codegen v0.14.4 target="logos_codegen"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\logos-codegen-3e34cc3728a7d5f1\lib-logos_codegen`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::cli::main
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  22: main
+  23: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  24: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  25: <unknown>
+  26: <unknown>
+   0.274363600s  INFO prepare_target{force=false package_id=chim-parser v0.1.0 (D:\PROJECT\chim\crates\chim-parser) target="chim_parser"}: cargo::core::compiler::fingerprint: fingerprint error for chim-parser v0.1.0 (D:\PROJECT\chim\crates\chim-parser)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_parser", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-parser\\src\\lib.rs", Edition2021) }
+   0.274391000s  INFO prepare_target{force=false package_id=chim-parser v0.1.0 (D:\PROJECT\chim\crates\chim-parser) target="chim_parser"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-parser-d03b7b31226f02cb\lib-chim_parser`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.275343300s  INFO prepare_target{force=false package_id=clap v4.5.54 target="clap"}: cargo::core::compiler::fingerprint: fingerprint error for clap v4.5.54/Check { test: false }/TargetInner { benched: false, ..: lib_target("clap", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\clap-4.5.54\\src\\lib.rs", Edition2021) }
+   0.275369700s  INFO prepare_target{force=false package_id=clap v4.5.54 target="clap"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\clap-ecba0fd9a004dfac\lib-clap`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.281353100s  INFO prepare_target{force=false package_id=clap_derive v4.5.49 target="clap_derive"}: cargo::core::compiler::fingerprint: fingerprint error for clap_derive v4.5.49/Build/TargetInner { benched: false, for_host: true, proc_macro: true, ..: lib_target("clap_derive", ["proc-macro"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\clap_derive-4.5.49\\src\\lib.rs", Edition2021) }
+   0.281386300s  INFO prepare_target{force=false package_id=clap_derive v4.5.49 target="clap_derive"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\clap_derive-2d8ea11554bd1177\lib-clap_derive`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::cli::main
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  20: main
+  21: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  22: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  23: <unknown>
+  24: <unknown>
+   0.282749900s  INFO prepare_target{force=false package_id=rayon v1.11.0 target="rayon"}: cargo::core::compiler::fingerprint: fingerprint error for rayon v1.11.0/Check { test: false }/TargetInner { ..: lib_target("rayon", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rayon-1.11.0\\src\\lib.rs", Edition2021) }
+   0.282785600s  INFO prepare_target{force=false package_id=rayon v1.11.0 target="rayon"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\rayon-5e1cc5a053d2f10c\lib-rayon`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.284390400s  INFO prepare_target{force=false package_id=rayon-core v1.13.0 target="rayon_core"}: cargo::core::compiler::fingerprint: fingerprint error for rayon-core v1.13.0/Check { test: false }/TargetInner { ..: lib_target("rayon_core", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rayon-core-1.13.0\\src\\lib.rs", Edition2021) }
+   0.284425800s  INFO prepare_target{force=false package_id=rayon-core v1.13.0 target="rayon_core"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\rayon-core-0f894d8da1228971\lib-rayon_core`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::cli::main
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  20: main
+  21: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  22: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  23: <unknown>
+  24: <unknown>
+   0.285506200s  INFO prepare_target{force=false package_id=crossbeam-deque v0.8.6 target="crossbeam_deque"}: cargo::core::compiler::fingerprint: fingerprint error for crossbeam-deque v0.8.6/Check { test: false }/TargetInner { ..: lib_target("crossbeam_deque", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crossbeam-deque-0.8.6\\src\\lib.rs", Edition2021) }
+   0.285535600s  INFO prepare_target{force=false package_id=crossbeam-deque v0.8.6 target="crossbeam_deque"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\crossbeam-deque-098aaccd18c68cc9\lib-crossbeam_deque`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::cli::main
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  21: main
+  22: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  23: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  24: <unknown>
+  25: <unknown>
+   0.286588700s  INFO prepare_target{force=false package_id=crossbeam-epoch v0.9.18 target="crossbeam_epoch"}: cargo::core::compiler::fingerprint: fingerprint error for crossbeam-epoch v0.9.18/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("crossbeam_epoch", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crossbeam-epoch-0.9.18\\src\\lib.rs", Edition2021) }
+   0.286621100s  INFO prepare_target{force=false package_id=crossbeam-epoch v0.9.18 target="crossbeam_epoch"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\crossbeam-epoch-6fcda60cb9abc467\lib-crossbeam_epoch`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::cli::main
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  22: main
+  23: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  24: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  25: <unknown>
+  26: <unknown>
+   0.287630700s  INFO prepare_target{force=false package_id=crossbeam-utils v0.8.21 target="crossbeam_utils"}: cargo::core::compiler::fingerprint: fingerprint error for crossbeam-utils v0.8.21/Check { test: false }/TargetInner { ..: lib_target("crossbeam_utils", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crossbeam-utils-0.8.21\\src\\lib.rs", Edition2021) }
+   0.287659300s  INFO prepare_target{force=false package_id=crossbeam-utils v0.8.21 target="crossbeam_utils"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\crossbeam-utils-c1b2e646ac929b54\lib-crossbeam_utils`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::cli::main
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  23: main
+  24: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  25: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  26: <unknown>
+  27: <unknown>
+   0.289757100s  INFO prepare_target{force=false package_id=crossbeam-utils v0.8.21 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for crossbeam-utils v0.8.21/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crossbeam-utils-0.8.21\\build.rs", Edition2021) }
+   0.289784700s  INFO prepare_target{force=false package_id=crossbeam-utils v0.8.21 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\crossbeam-utils-c9f1644687e290ac\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: cargo::core::compiler::compile
+  15: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  16: cargo::ops::cargo_compile::compile_ws
+  17: cargo::ops::cargo_compile::compile_with_exec
+  18: cargo::ops::cargo_compile::compile
+  19: cargo::commands::check::exec
+  20: <cargo::cli::Exec>::exec
+  21: cargo::cli::main
+  22: cargo::main
+  23: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  24: std::rt::lang_start::<()>::{closure#0}
+  25: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  26: main
+  27: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  28: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  29: <unknown>
+  30: <unknown>
+   0.290254000s  INFO prepare_target{force=false package_id=crossbeam-utils v0.8.21 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for crossbeam-utils v0.8.21/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crossbeam-utils-0.8.21\\build.rs", Edition2021) }
+   0.290278800s  INFO prepare_target{force=false package_id=crossbeam-utils v0.8.21 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\crossbeam-utils-4c1a0d522c29f5ea\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  15: cargo::ops::cargo_compile::compile_ws
+  16: cargo::ops::cargo_compile::compile_with_exec
+  17: cargo::ops::cargo_compile::compile
+  18: cargo::commands::check::exec
+  19: <cargo::cli::Exec>::exec
+  20: cargo::cli::main
+  21: cargo::main
+  22: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  23: std::rt::lang_start::<()>::{closure#0}
+  24: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  25: main
+  26: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  27: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  28: <unknown>
+  29: <unknown>
+   0.292629800s  INFO prepare_target{force=false package_id=rayon-core v1.13.0 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for rayon-core v1.13.0/RunCustomBuild/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rayon-core-1.13.0\\build.rs", Edition2021) }
+   0.292656100s  INFO prepare_target{force=false package_id=rayon-core v1.13.0 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\rayon-core-3ca04766fe0ebbd5\run-build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::custom_build::build_work
+   7: cargo::core::compiler::custom_build::prepare
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::cli::main
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  23: main
+  24: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  25: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  26: <unknown>
+  27: <unknown>
+   0.293158100s  INFO prepare_target{force=false package_id=rayon-core v1.13.0 target="build-script-build"}: cargo::core::compiler::fingerprint: fingerprint error for rayon-core v1.13.0/Build/TargetInner { ..: custom_build_target("build-script-build", "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rayon-core-1.13.0\\build.rs", Edition2021) }
+   0.293182400s  INFO prepare_target{force=false package_id=rayon-core v1.13.0 target="build-script-build"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\rayon-core-27d14500d90bd541\build-script-build-script-build`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::cli::main
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  22: main
+  23: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  24: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  25: <unknown>
+  26: <unknown>
+   0.294313600s  INFO prepare_target{force=false package_id=tracing v0.1.44 target="tracing"}: cargo::core::compiler::fingerprint: fingerprint error for tracing v0.1.44/Check { test: false }/TargetInner { ..: lib_target("tracing", ["lib"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\tracing-0.1.44\\src\\lib.rs", Edition2018) }
+   0.294341500s  INFO prepare_target{force=false package_id=tracing v0.1.44 target="tracing"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\tracing-42b4c7b365a7d833\lib-tracing`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::cli::main
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  19: main
+  20: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  21: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  22: <unknown>
+  23: <unknown>
+   0.295670900s  INFO prepare_target{force=false package_id=tracing-attributes v0.1.31 target="tracing_attributes"}: cargo::core::compiler::fingerprint: fingerprint error for tracing-attributes v0.1.31/Build/TargetInner { for_host: true, proc_macro: true, ..: lib_target("tracing_attributes", ["proc-macro"], "C:\\Users\\Administrator\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\tracing-attributes-0.1.31\\src\\lib.rs", Edition2018) }
+   0.295699000s  INFO prepare_target{force=false package_id=tracing-attributes v0.1.31 target="tracing_attributes"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\tracing-attributes-c6c536f3f101c7f2\lib-tracing_attributes`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::cli::main
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  20: main
+  21: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  22: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  23: <unknown>
+  24: <unknown>
+   0.299615900s  INFO prepare_target{force=false package_id=chim v0.1.0 (D:\PROJECT\chim\crates\chim) target="chim"}: cargo::core::compiler::fingerprint: fingerprint error for chim v0.1.0 (D:\PROJECT\chim\crates\chim)/Check { test: true }/TargetInner { name: "chim", doc: true, ..: with_path("D:\\PROJECT\\chim\\crates\\chim\\src\\main.rs", Edition2021) }
+   0.299648200s  INFO prepare_target{force=false package_id=chim v0.1.0 (D:\PROJECT\chim\crates\chim) target="chim"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-35bb964e8863413d\test-bin-chim`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.301265400s  INFO prepare_target{force=false package_id=chim-ast v0.1.0 (D:\PROJECT\chim\crates\chim-ast) target="chim_ast"}: cargo::core::compiler::fingerprint: fingerprint error for chim-ast v0.1.0 (D:\PROJECT\chim\crates\chim-ast)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_ast", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-ast\\src\\lib.rs", Edition2021) }
+   0.301299900s  INFO prepare_target{force=false package_id=chim-ast v0.1.0 (D:\PROJECT\chim\crates\chim-ast) target="chim_ast"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-ast-ab599a8e484ae7d7\test-lib-chim_ast`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.302400300s  INFO prepare_target{force=false package_id=chim-cfg v0.1.0 (D:\PROJECT\chim\crates\chim-cfg) target="chim_cfg"}: cargo::core::compiler::fingerprint: fingerprint error for chim-cfg v0.1.0 (D:\PROJECT\chim\crates\chim-cfg)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_cfg", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-cfg\\src\\lib.rs", Edition2021) }
+   0.302427200s  INFO prepare_target{force=false package_id=chim-cfg v0.1.0 (D:\PROJECT\chim\crates\chim-cfg) target="chim_cfg"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-cfg-72a79f98f2311a07\lib-chim_cfg`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.303539800s  INFO prepare_target{force=false package_id=chim-cfg v0.1.0 (D:\PROJECT\chim\crates\chim-cfg) target="chim_cfg"}: cargo::core::compiler::fingerprint: fingerprint error for chim-cfg v0.1.0 (D:\PROJECT\chim\crates\chim-cfg)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_cfg", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-cfg\\src\\lib.rs", Edition2021) }
+   0.303567600s  INFO prepare_target{force=false package_id=chim-cfg v0.1.0 (D:\PROJECT\chim\crates\chim-cfg) target="chim_cfg"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-cfg-f99b4820c42ba2d4\test-lib-chim_cfg`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.304589900s  INFO prepare_target{force=false package_id=chim-codegen v0.1.0 (D:\PROJECT\chim\crates\chim-codegen) target="chim_codegen"}: cargo::core::compiler::fingerprint: fingerprint error for chim-codegen v0.1.0 (D:\PROJECT\chim\crates\chim-codegen)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_codegen", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-codegen\\src\\lib.rs", Edition2021) }
+   0.304617400s  INFO prepare_target{force=false package_id=chim-codegen v0.1.0 (D:\PROJECT\chim\crates\chim-codegen) target="chim_codegen"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-codegen-ec049753b215243e\test-lib-chim_codegen`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.305690400s  INFO prepare_target{force=false package_id=chim-error v0.1.0 (D:\PROJECT\chim\crates\chim-error) target="chim_error"}: cargo::core::compiler::fingerprint: fingerprint error for chim-error v0.1.0 (D:\PROJECT\chim\crates\chim-error)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_error", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-error\\src\\lib.rs", Edition2021) }
+   0.305717700s  INFO prepare_target{force=false package_id=chim-error v0.1.0 (D:\PROJECT\chim\crates\chim-error) target="chim_error"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-error-a8e4854cfd7e78e1\test-lib-chim_error`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.306738500s  INFO prepare_target{force=false package_id=chim-ir v0.1.0 (D:\PROJECT\chim\crates\chim-ir) target="chim_ir"}: cargo::core::compiler::fingerprint: fingerprint error for chim-ir v0.1.0 (D:\PROJECT\chim\crates\chim-ir)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_ir", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-ir\\src\\lib.rs", Edition2021) }
+   0.306765600s  INFO prepare_target{force=false package_id=chim-ir v0.1.0 (D:\PROJECT\chim\crates\chim-ir) target="chim_ir"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-ir-e32d620b9bb34456\test-lib-chim_ir`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.307813300s  INFO prepare_target{force=false package_id=chim-lexer v0.1.0 (D:\PROJECT\chim\crates\chim-lexer) target="chim_lexer"}: cargo::core::compiler::fingerprint: fingerprint error for chim-lexer v0.1.0 (D:\PROJECT\chim\crates\chim-lexer)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_lexer", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-lexer\\src\\lib.rs", Edition2021) }
+   0.307840300s  INFO prepare_target{force=false package_id=chim-lexer v0.1.0 (D:\PROJECT\chim\crates\chim-lexer) target="chim_lexer"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-lexer-4e95c2e5e3296df7\test-lib-chim_lexer`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.308970000s  INFO prepare_target{force=false package_id=chim-linker v0.1.0 (D:\PROJECT\chim\crates\chim-linker) target="chim_linker"}: cargo::core::compiler::fingerprint: fingerprint error for chim-linker v0.1.0 (D:\PROJECT\chim\crates\chim-linker)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_linker", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-linker\\src\\lib.rs", Edition2021) }
+   0.308998300s  INFO prepare_target{force=false package_id=chim-linker v0.1.0 (D:\PROJECT\chim\crates\chim-linker) target="chim_linker"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-linker-f65478eb46fecf7f\lib-chim_linker`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.310017800s  INFO prepare_target{force=false package_id=chim-linker v0.1.0 (D:\PROJECT\chim\crates\chim-linker) target="chim_linker"}: cargo::core::compiler::fingerprint: fingerprint error for chim-linker v0.1.0 (D:\PROJECT\chim\crates\chim-linker)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_linker", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-linker\\src\\lib.rs", Edition2021) }
+   0.310045300s  INFO prepare_target{force=false package_id=chim-linker v0.1.0 (D:\PROJECT\chim\crates\chim-linker) target="chim_linker"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-linker-c8dd58d0fe349f1a\test-lib-chim_linker`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.311039700s  INFO prepare_target{force=false package_id=chim-parser v0.1.0 (D:\PROJECT\chim\crates\chim-parser) target="chim_parser"}: cargo::core::compiler::fingerprint: fingerprint error for chim-parser v0.1.0 (D:\PROJECT\chim\crates\chim-parser)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_parser", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-parser\\src\\lib.rs", Edition2021) }
+   0.311066800s  INFO prepare_target{force=false package_id=chim-parser v0.1.0 (D:\PROJECT\chim\crates\chim-parser) target="chim_parser"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-parser-572882a1ecdeb423\test-lib-chim_parser`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.312173700s  INFO prepare_target{force=false package_id=chim-runtime v0.1.0 (D:\PROJECT\chim\crates\chim-runtime) target="chim_runtime"}: cargo::core::compiler::fingerprint: fingerprint error for chim-runtime v0.1.0 (D:\PROJECT\chim\crates\chim-runtime)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_runtime", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-runtime\\src\\lib.rs", Edition2021) }
+   0.312201200s  INFO prepare_target{force=false package_id=chim-runtime v0.1.0 (D:\PROJECT\chim\crates\chim-runtime) target="chim_runtime"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-runtime-7e79cff32634866e\lib-chim_runtime`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.313211100s  INFO prepare_target{force=false package_id=chim-runtime v0.1.0 (D:\PROJECT\chim\crates\chim-runtime) target="chim_runtime"}: cargo::core::compiler::fingerprint: fingerprint error for chim-runtime v0.1.0 (D:\PROJECT\chim\crates\chim-runtime)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_runtime", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-runtime\\src\\lib.rs", Edition2021) }
+   0.313238300s  INFO prepare_target{force=false package_id=chim-runtime v0.1.0 (D:\PROJECT\chim\crates\chim-runtime) target="chim_runtime"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-runtime-d3d05166a9fc51d2\test-lib-chim_runtime`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.314278400s  INFO prepare_target{force=false package_id=chim-semantic v0.1.0 (D:\PROJECT\chim\crates\chim-semantic) target="chim_semantic"}: cargo::core::compiler::fingerprint: fingerprint error for chim-semantic v0.1.0 (D:\PROJECT\chim\crates\chim-semantic)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_semantic", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-semantic\\src\\lib.rs", Edition2021) }
+   0.314305400s  INFO prepare_target{force=false package_id=chim-semantic v0.1.0 (D:\PROJECT\chim\crates\chim-semantic) target="chim_semantic"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-semantic-712ed8c93f794e74\test-lib-chim_semantic`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.316235000s  INFO prepare_target{force=false package_id=chim-std v0.1.0 (D:\PROJECT\chim\crates\chim-std) target="chim_std"}: cargo::core::compiler::fingerprint: fingerprint error for chim-std v0.1.0 (D:\PROJECT\chim\crates\chim-std)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("chim_std", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-std\\src\\lib.rs", Edition2021) }
+   0.316267700s  INFO prepare_target{force=false package_id=chim-std v0.1.0 (D:\PROJECT\chim\crates\chim-std) target="chim_std"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-std-7f3da417ba8a3af6\lib-chim_std`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   0.317478400s  INFO prepare_target{force=false package_id=chim-std v0.1.0 (D:\PROJECT\chim\crates\chim-std) target="chim_std"}: cargo::core::compiler::fingerprint: fingerprint error for chim-std v0.1.0 (D:\PROJECT\chim\crates\chim-std)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("chim_std", ["lib"], "D:\\PROJECT\\chim\\crates\\chim-std\\src\\lib.rs", Edition2021) }
+   0.317511000s  INFO prepare_target{force=false package_id=chim-std v0.1.0 (D:\PROJECT\chim\crates\chim-std) target="chim_std"}: cargo::core::compiler::fingerprint:     err: failed to read `D:\PROJECT\chim\target\debug\.fingerprint\chim-std-8fc1f7b94a00a752\test-lib-chim_std`
+
+Caused by:
+    系统找不到指定的文件。 (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/../../backtrace/src/backtrace/win64.rs:85:14
+   1: std::backtrace::Backtrace::capture
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/std/src/backtrace.rs:296:9
+   2: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   3: cargo_util::paths::read
+   4: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   5: cargo::core::compiler::fingerprint::prepare_target
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+             at /rustc/ded5c06cf21d2b93bffd5d884aa6e96934ee4234/library/core/src/ops/function.rs:287:21
+  18: main
+  19: __tmainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:236:11
+  20: mainCRTStartup
+             at /home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/mingw-w64-crt/build-x86_64/../crt/crtexe.c:122:9
+  21: <unknown>
+  22: <unknown>
+   Compiling proc-macro2 v1.0.105
+   Compiling quote v1.0.43
+   Compiling thiserror v1.0.69
+   Compiling zerocopy v0.8.33
+   Compiling ahash v0.8.12
+   Compiling crossbeam-utils v0.8.21
+   Compiling anyhow v1.0.100
+   Compiling rayon-core v1.13.0
+error: could not compile `quote` (build script) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `proc-macro2` (build script) due to 1 previous error
+error: could not compile `ahash` (build script) due to 1 previous error
+error: could not compile `thiserror` (build script) due to 1 previous error
+error: could not compile `zerocopy` (build script) due to 1 previous error
+error: could not compile `rayon-core` (build script) due to 1 previous error
+error: could not compile `crossbeam-utils` (build script) due to 1 previous error
+error: could not compile `anyhow` (build script) due to 1 previous error

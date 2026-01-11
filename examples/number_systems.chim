@@ -1,0 +1,61 @@
+fn main() {
+    println("=== Chim Number Systems Demo ===");
+    println!();
+    
+    println("1. Duodecimal (Base-12) - Used in time and commerce");
+    let dozen = 0d10;
+    let gross = 0d100;
+    println("   Dozen (12): 0d10 = {}", dozen);
+    println("   Gross (144): 0d100 = {}", gross);
+    println!();
+    
+    println("2. Tetravigesimal (Base-24) - Used for hours");
+    let hours = 0h10;
+    let half_day = 0h12;
+    let full_day = 0h20;
+    println("   Hour (24): 0h10 = {}", hours);
+    println("   Half day (12): 0h12 = {}", half_day);
+    println("   Full day (24): 0h20 = {}", full_day);
+    println!();
+    
+    println("3. Sexagesimal (Base-60) - Used for time and angles");
+    let minute = 0s10;
+    let hour = 0s3c;
+    let degree = 0s10;
+    println("   Minute (60): 0s10 = {}", minute);
+    println("   Hour (3600): 0s3c = {}", hour);
+    println("   Degree (60): 0s10 = {}", degree);
+    println!();
+    
+    println("4. Ternary (Base-3) - Computer science");
+    let ternary = 0t120;
+    println("   Ternary 0t120 = {}", ternary);
+    println!();
+    
+    println("5. Balanced Ternary (Base-3) - Mathematical elegance");
+    let balanced = 0e1-0;
+    println("   Balanced 0e1-0 = {}", balanced);
+    println!();
+    
+    println("6. Traditional bases");
+    let decimal = 42;
+    let hex = 0xFF;
+    let binary = 0b1010;
+    let octal = 0o755;
+    println("   Decimal: {}", decimal);
+    println("   Hexadecimal: 0xFF = {}", hex);
+    println("   Binary: 0b1010 = {}", binary);
+    println("   Octal: 0o755 = {}", octal);
+    println!();
+    
+    println("=== All 9 bases supported ===");
+    println("Decimal (10): 42");
+    println("Hexadecimal (16): 0xFF");
+    println("Binary (2): 0b1010");
+    println("Octal (8): 0o755");
+    println("Ternary (3): 0t120");
+    println("Balanced Ternary (3): 0e1-0");
+    println("Duodecimal (12): 0d10");
+    println("Tetravigesimal (24): 0h10");
+    println("Sexagesimal (60): 0s10");
+}

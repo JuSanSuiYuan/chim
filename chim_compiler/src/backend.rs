@@ -81,6 +81,8 @@ pub enum BackendType {
     Matlab,    // MATLAB
     Php,       // PHP
     June,      // June
+    Agda,      // Agda
+    Unison,    // Unison
 }
 
 impl BackendType {
@@ -146,6 +148,8 @@ impl BackendType {
             "matlab" | "mat" | "m" => Some(Self::Matlab),
             "php" => Some(Self::Php),
             "june" => Some(Self::June),
+            "agda" => Some(Self::Agda),
+            "unison" | "u" => Some(Self::Unison),
             
             _ => None,
         }
@@ -213,6 +217,8 @@ impl BackendType {
             Self::Matlab,
             Self::Php,
             Self::June,
+            Self::Agda,
+            Self::Unison,
         ]
     }
 }
@@ -280,5 +286,7 @@ pub fn create_backend(backend_type: BackendType) -> Box<dyn CodegenBackend> {
         BackendType::Matlab => Box::new(crate::backends::matlab::MatlabBackend::new()),
         BackendType::Php => Box::new(crate::backends::php::PhpBackend::new()),
         BackendType::June => Box::new(crate::backends::june::JuneBackend::new()),
+        BackendType::Agda => Box::new(crate::backends::agda::AgdaBackend::new()),
+        BackendType::Unison => Box::new(crate::backends::unison::UnisonBackend::new()),
     }
 }
